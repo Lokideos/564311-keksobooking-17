@@ -42,6 +42,14 @@ var renderPins = function (pinsPlacement, pinsData, fragment) {
   canvas.appendChild(fragment);
 };
 
+var adjustXLocation = function (xCoordinate) {
+  return xCoordinate + document.querySelector('.map__pin').offsetWidth / 2;
+};
+
+var adjustYLocation = function (yCoordinate) {
+  return yCoordinate + document.querySelector('.map__pin').offsetHeight;
+};
+
 // Generators
 // Mock helpers
 var generateX = function () {
@@ -59,7 +67,13 @@ var generateX = function () {
 };
 
 var generateY = function (min, max) {
-  return Math.floor(Math.random() * (max - min) + min);
+  var yCoordinate = Math.floor(Math.random() * (max - min) + min);
+
+  if (yCoordinate > 550) {
+    return 550;
+  }
+
+  return yCoordinate;
 };
 
 var generateAvatarId = function (maxId) {
@@ -106,7 +120,7 @@ var generateAdsArray = function (length) {
 
 var generatePin = function (ad) {
   var pin = getTemplateFragment(pinTemplateSelector, pinFragmentSelector).cloneNode(true);
-  pin.style = 'left: ' + ad.location.x + 'px; top: ' + ad.location.y + 'px;';
+  pin.style = 'left: ' + adjustXLocation(ad.location.x) + 'px; top: ' + adjustYLocation(ad.location.y) + 'px;';
   var pinImage = pin.querySelector('img');
   pinImage.src = ad.author.avatar;
   pinImage.alt = ad.offer.type;
