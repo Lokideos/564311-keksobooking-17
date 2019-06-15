@@ -6,6 +6,8 @@ var OFFER_TYPES = ['palace', 'flat', 'house', 'bungalo'];
 var MIN_Y = 130;
 var MAX_Y = 630;
 var overlaySelector = '.map__overlay';
+var mapSelector = '.map';
+var fadingClassName = 'map--faded';
 
 
 // Support
@@ -16,6 +18,10 @@ var pickRandomIndex = function (length) {
 // DOM manipulation
 var getOverlayWidth = function (overlay) {
   return document.querySelector(overlay).offsetWidth;
+};
+
+var showMap = function (selector, hidingClass) {
+  document.querySelector(selector).classList.remove(hidingClass);
 };
 
 // Generators
@@ -69,4 +75,9 @@ var generateAdArray = function (length) {
 };
 
 // Runtime
-generateAdArray(8);
+var useMock = function () {
+  generateAdArray(8);
+  showMap(mapSelector, fadingClassName);
+};
+
+useMock();
