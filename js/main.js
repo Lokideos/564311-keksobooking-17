@@ -8,6 +8,9 @@ var MAX_Y = 630;
 var overlaySelector = '.map__overlay';
 var mapSelector = '.map';
 var fadingClassName = 'map--faded';
+var pinTemplateSelector = '#pin';
+var pinFragmentSelector = '.map__pin';
+var pinsPlacementSelector = '.map__pins';
 
 
 // Support
@@ -20,8 +23,23 @@ var getOverlayWidth = function (overlay) {
   return document.querySelector(overlay).offsetWidth;
 };
 
+var getTemplateFragment = function (templateId, templateFragment) {
+  return document.querySelector(templateId)
+    .content
+    .querySelector(templateFragment);
+};
+
 var showMap = function (selector, hidingClass) {
   document.querySelector(selector).classList.remove(hidingClass);
+};
+
+var renderPins = function (pinsPlacement, pinsData, fragment) {
+  var canvas = document.querySelector(pinsPlacement);
+  pinsData.forEach(function (pin) {
+    fragment.appendChild(pin);
+  });
+
+  canvas.appendChild(fragment);
 };
 
 // Generators
@@ -65,7 +83,7 @@ var generateAd = function () {
   };
 };
 
-var generateAdArray = function (length) {
+var generateAdsArray = function (length) {
   var ads = [];
   for (var i = 0; i < length; i++) {
     ads.push(generateAd());
@@ -74,10 +92,32 @@ var generateAdArray = function (length) {
   return ads;
 };
 
+var generatePin = function (ad) {
+  var pin = getTemplateFragment(pinTemplateSelector, pinFragmentSelector).cloneNode(true);
+  pin.style = 'left: ' + ad.location.x + 'px; top: ' + ad.location.y + 'px;';
+  var pinImage = pin.querySelector('img');
+  pinImage.src = ad.author.avatar;
+  pinImage.alt = ad.offer.type;
+
+  return pin;
+};
+
+var generatePinsArray = function (ads) {
+  var pins = [];
+  ads.forEach(function (ad) {
+    pins.push(generatePin(ad));
+  });
+
+  return pins;
+};
+
 // Runtime
 var useMock = function () {
-  generateAdArray(8);
+  var mockAds = generateAdsArray(8);
+  var mockPins = generatePinsArray(mockAds);
   showMap(mapSelector, fadingClassName);
+  var fragment = document.createDocumentFragment();
+  renderPins(pinsPlacementSelector, mockPins, fragment);
 };
 
 useMock();
