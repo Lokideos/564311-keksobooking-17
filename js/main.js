@@ -45,7 +45,18 @@ var renderPins = function (pinsPlacement, pinsData, fragment) {
 // Generators
 // Mock helpers
 var generateX = function () {
-  return Math.floor(Math.random() * getOverlayWidth(overlaySelector));
+  var x = Math.floor(Math.random() * getOverlayWidth(overlaySelector));
+
+  if (x > 1100) {
+    return 1100;
+  }
+
+  if (x < 100) {
+    return 100;
+  }
+
+  // return Math.floor(Math.random() * getOverlayWidth(overlaySelector));
+  return x;
 };
 
 var generateY = function (min, max) {
@@ -112,7 +123,7 @@ var generatePinsArray = function (ads) {
 };
 
 // Runtime
-var useMock = function () {
+var fillApplictationWithMocData = function () {
   var mockAds = generateAdsArray(8);
   var mockPins = generatePinsArray(mockAds);
   showMap(mapSelector, fadingClassName);
@@ -120,4 +131,4 @@ var useMock = function () {
   renderPins(pinsPlacementSelector, mockPins, fragment);
 };
 
-useMock();
+fillApplictationWithMocData();
