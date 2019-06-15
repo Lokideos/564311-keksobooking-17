@@ -55,7 +55,6 @@ var generateX = function () {
     return 100;
   }
 
-  // return Math.floor(Math.random() * getOverlayWidth(overlaySelector));
   return xCoordinate;
 };
 
