@@ -45,18 +45,18 @@ var renderPins = function (pinsPlacement, pinsData, fragment) {
 // Generators
 // Mock helpers
 var generateX = function () {
-  var x = Math.floor(Math.random() * getOverlayWidth(overlaySelector));
+  var xCoordinate = Math.floor(Math.random() * getOverlayWidth(overlaySelector));
 
-  if (x > 1100) {
+  if (xCoordinate > 1100) {
     return 1100;
   }
 
-  if (x < 100) {
+  if (xCoordinate < 100) {
     return 100;
   }
 
   // return Math.floor(Math.random() * getOverlayWidth(overlaySelector));
-  return x;
+  return xCoordinate;
 };
 
 var generateY = function (min, max) {
