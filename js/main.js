@@ -81,6 +81,8 @@ var generateLocation = function () {
   };
 };
 
+
+// Actual data generation
 var generateAd = function () {
   return {
     'author': {
