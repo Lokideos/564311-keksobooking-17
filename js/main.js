@@ -115,12 +115,9 @@ var generatePin = function (ad) {
 };
 
 var generatePinsArray = function (ads) {
-  var pins = [];
-  ads.forEach(function (ad) {
-    pins.push(generatePin(ad));
+  return ads.map(function (ad) {
+    return generatePin(ad);
   });
-
-  return pins;
 };
 
 // Runtime
