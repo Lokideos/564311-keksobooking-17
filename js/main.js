@@ -4,14 +4,19 @@
 // Selected DOM Elements
 var adForm = document.querySelector('.ad-form');
 var mapFiltersForm = document.querySelector('.map__filters');
+var mainPin = document.querySelector('.map__pin--main');
+var map = document.querySelector('.map');
+var FORMS = [adForm, mapFiltersForm];
 
 // Selectors
 var overlaySelector = '.map__overlay';
-var mapSelector = '.map';
-var FADING_CLASS_NAME = 'map--faded';
 var pinTemplateSelector = '#pin';
 var pinFragmentSelector = '.map__pin';
 var pinsPlacementSelector = '.map__pins';
+
+// Class names
+var FADING_MAP_FORM_CLASS = 'map--faded';
+var FADING_AD_FORM_CLASS = 'ad-form--disabled';
 
 // Mock data
 var AVATAR_LINK_TEMPLATE = 'img/avatars/user0';
@@ -19,6 +24,14 @@ var AVATAR_EXTENSION = '.png';
 var OFFER_TYPES = ['palace', 'flat', 'house', 'bungalo'];
 var MIN_Y = 130;
 var MAX_Y = 630;
+
+// Event Handlers Functions
+
+var turnOnForms = function () {
+  enableForms(FORMS);
+  disableMapFade(map);
+  activateAdForm(adForm);
+};
 
 // Support
 var pickRandomIndex = function (length) {
@@ -36,8 +49,12 @@ var getTemplateFragment = function (templateId, templateFragment) {
     .querySelector(templateFragment);
 };
 
-var showMap = function (selector) {
-  document.querySelector(selector).classList.remove(FADING_CLASS_NAME);
+var disableMapFade = function (fadedMap) {
+  fadedMap.classList.remove(FADING_MAP_FORM_CLASS);
+};
+
+var activateAdForm = function (fadedForm) {
+  fadedForm.classList.remove(FADING_AD_FORM_CLASS);
 };
 
 var renderPins = function (pinsPlacement, pinsData, fragment) {
@@ -62,6 +79,26 @@ var disableFormElements = function (form, elements) {
     form.querySelectorAll(element).forEach(function (chosenElement) {
       chosenElement.disabled = true;
     });
+  });
+};
+
+var enableFormElements = function (form, elements) {
+  elements.forEach(function (element) {
+    form.querySelectorAll(element).forEach(function (chosenElement) {
+      chosenElement.disabled = false;
+    });
+  });
+};
+
+var disableForms = function (forms) {
+  forms.forEach(function (form) {
+    disableFormElements(form, ['select', 'fieldset']);
+  });
+};
+
+var enableForms = function (forms) {
+  forms.forEach(function (form) {
+    enableFormElements(form, ['select', 'fieldset']);
   });
 };
 
@@ -153,10 +190,14 @@ var generatePinsArray = function (ads) {
 var fillApplictationWithMocData = function () {
   var mockAds = generateAdsArray(8);
   var mockPins = generatePinsArray(mockAds);
-  disableFormElements(mapFiltersForm, ['select', 'fieldset']);
-  disableFormElements(adForm, ['fieldset']);
+  disableForms([mapFiltersForm, adForm]);
   var fragment = document.createDocumentFragment();
   renderPins(pinsPlacementSelector, mockPins, fragment);
 };
 
+var applyEventHandlers = function () {
+  mainPin.addEventListener('click', turnOnForms);
+};
+
 fillApplictationWithMocData();
+applyEventHandlers();
