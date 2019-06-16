@@ -27,7 +27,7 @@ var MAX_Y = 630;
 
 // Event Handlers Functions
 
-var turnOnForms = function () {
+var activateApplication = function () {
   enableForms(FORMS);
   disableMapFade(map);
   activateAdForm(adForm);
@@ -196,7 +196,7 @@ var fillApplictationWithMocData = function () {
 };
 
 var applyEventHandlers = function () {
-  mainPin.addEventListener('click', turnOnForms);
+  mainPin.addEventListener('click', activateApplication);
 };
 
 fillApplictationWithMocData();
