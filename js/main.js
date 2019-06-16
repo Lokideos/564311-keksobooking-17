@@ -8,6 +8,8 @@ var mainPin = document.querySelector('.map__pin--main');
 var map = document.querySelector('.map');
 var appartmentType = adForm.querySelector('select[name="type"]');
 var minPrice = adForm.querySelector('input[name="price"]');
+var timeIn = adForm.querySelector('select[name="timein"');
+var timeOut = adForm.querySelector('select[name="timeout"');
 var FORMS = [adForm, mapFiltersForm];
 
 // Initial Data
@@ -49,8 +51,16 @@ var onMainPinMouseup = function () {
   fillAddressElement(adForm, 'input[name="address"]', calculateMainPinCoordinates());
 };
 
-var onAppartmentTypeSelect = function () {
+var onAppartmentTypeChange = function () {
   changeMinPrice();
+};
+
+var onTimeInChange = function () {
+  changeTimeOutTime();
+};
+
+var onTimeOutChange = function () {
+  changeTimInTime();
 };
 
 // Support
@@ -146,6 +156,14 @@ var changeMinPrice = function () {
   var type = appartmentType.options[appartmentType.selectedIndex].value;
   minPrice.placeholder = PRICE_BY_TYPE[type];
   minPrice.min = PRICE_BY_TYPE[type];
+};
+
+var changeTimeOutTime = function () {
+  timeOut.selectedIndex = timeIn.selectedIndex;
+};
+
+var changeTimInTime = function () {
+  timeIn.selectedIndex = timeOut.selectedIndex;
 };
 
 // Generators
@@ -245,7 +263,9 @@ var fillApplictationWithMocData = function () {
 var applyEventHandlers = function () {
   mainPin.addEventListener('click', onMainPinClick);
   mainPin.addEventListener('mouseup', onMainPinMouseup);
-  appartmentType.addEventListener('change', onAppartmentTypeSelect);
+  appartmentType.addEventListener('change', onAppartmentTypeChange);
+  timeIn.addEventListener('change', onTimeInChange);
+  timeOut.addEventListener('change', onTimeOutChange);
 };
 
 fillApplictationWithMocData();
