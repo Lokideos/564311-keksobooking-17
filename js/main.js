@@ -28,6 +28,7 @@ var overlaySelector = '.map__overlay';
 var pinTemplateSelector = '#pin';
 var pinFragmentSelector = '.map__pin';
 var pinsPlacementSelector = '.map__pins';
+var SELECTORS_TO_TOGGLE = ['select', 'fieldset'];
 
 // Class names
 var FADING_MAP_FORM_CLASS = 'map--faded';
@@ -120,31 +121,23 @@ var adjustYLocation = function (yCoordinate) {
   return yCoordinate + document.querySelector('.map__pin').offsetHeight;
 };
 
-var disableFormElements = function (form, elements) {
-  elements.forEach(function (element) {
-    form.querySelectorAll(element).forEach(function (chosenElement) {
-      chosenElement.disabled = true;
-    });
-  });
-};
-
-var enableFormElements = function (form, elements) {
-  elements.forEach(function (element) {
-    form.querySelectorAll(element).forEach(function (chosenElement) {
-      chosenElement.disabled = false;
+var toggleFormSelectors = function (form, toggleValue) {
+  SELECTORS_TO_TOGGLE.forEach(function (selector) {
+    form.querySelectorAll(selector).forEach(function (chosenSelector) {
+      chosenSelector.disabled = toggleValue;
     });
   });
 };
 
 var disableForms = function (forms) {
   forms.forEach(function (form) {
-    disableFormElements(form, ['select', 'fieldset']);
+    toggleFormSelectors(form, true);
   });
 };
 
 var enableForms = function (forms) {
   forms.forEach(function (form) {
-    enableFormElements(form, ['select', 'fieldset']);
+    toggleFormSelectors(form, false);
   });
 };
 
