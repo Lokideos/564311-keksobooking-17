@@ -1,21 +1,66 @@
 'use strict';
 
+// Initialize
+// Selected DOM Elements
+var adForm = document.querySelector('.ad-form');
+var mapFiltersForm = document.querySelector('.map__filters');
+var mainPin = document.querySelector('.map__pin--main');
+var map = document.querySelector('.map');
+var FORMS = [adForm, mapFiltersForm];
+
+// Initial Data
+var MAIN_PIN_LENGTH = 22;
+var TOP_MAIN_PIN_COORDINATES = mainPin.offsetTop + Math.floor(mainPin.offsetHeight / 2);
+var LEFT_MAIN_PIN_COORDINATES = mainPin.offsetLeft + Math.floor(mainPin.offsetWidth / 2);
+
+// Selectors
+var overlaySelector = '.map__overlay';
+var pinTemplateSelector = '#pin';
+var pinFragmentSelector = '.map__pin';
+var pinsPlacementSelector = '.map__pins';
+
+// Class names
+var FADING_MAP_FORM_CLASS = 'map--faded';
+var FADING_AD_FORM_CLASS = 'ad-form--disabled';
+
+// Mock data
 var AVATAR_LINK_TEMPLATE = 'img/avatars/user0';
 var AVATAR_EXTENSION = '.png';
 var OFFER_TYPES = ['palace', 'flat', 'house', 'bungalo'];
 var MIN_Y = 130;
 var MAX_Y = 630;
-var overlaySelector = '.map__overlay';
-var mapSelector = '.map';
-var fadingClassName = 'map--faded';
-var pinTemplateSelector = '#pin';
-var pinFragmentSelector = '.map__pin';
-var pinsPlacementSelector = '.map__pins';
 
+// Event Handlers Functions
+
+var onMainPinClick = function () {
+  enableForms(FORMS);
+  disableMapFade(map);
+  activateAdForm(adForm);
+};
+
+var onMainPinMouseup = function () {
+  fillAddressElement(adForm, 'input[name="address"]', calculateMainPinCoordinates());
+};
 
 // Support
 var pickRandomIndex = function (length) {
   return Math.floor(Math.random() * length);
+};
+
+var calculateInitialMainPinCoordinates = function () {
+  return LEFT_MAIN_PIN_COORDINATES + ', ' + TOP_MAIN_PIN_COORDINATES;
+};
+
+var calculateMainPinCoordinates = function () {
+  return getXCoordinates(mainPin) + ', ' + getYCoordinates(mainPin);
+};
+
+var getXCoordinates = function (pin) {
+  return pin.offsetLeft + Math.floor(pin.offsetWidth / 2);
+};
+
+var getYCoordinates = function (pin) {
+  return pin.offsetTop + pin.offsetHeight + MAIN_PIN_LENGTH;
 };
 
 // DOM manipulation
@@ -29,8 +74,12 @@ var getTemplateFragment = function (templateId, templateFragment) {
     .querySelector(templateFragment);
 };
 
-var showMap = function (selector, hidingClass) {
-  document.querySelector(selector).classList.remove(hidingClass);
+var disableMapFade = function (fadedMap) {
+  fadedMap.classList.remove(FADING_MAP_FORM_CLASS);
+};
+
+var activateAdForm = function (fadedForm) {
+  fadedForm.classList.remove(FADING_AD_FORM_CLASS);
 };
 
 var renderPins = function (pinsPlacement, pinsData, fragment) {
@@ -48,6 +97,38 @@ var adjustXLocation = function (xCoordinate) {
 
 var adjustYLocation = function (yCoordinate) {
   return yCoordinate + document.querySelector('.map__pin').offsetHeight;
+};
+
+var disableFormElements = function (form, elements) {
+  elements.forEach(function (element) {
+    form.querySelectorAll(element).forEach(function (chosenElement) {
+      chosenElement.disabled = true;
+    });
+  });
+};
+
+var enableFormElements = function (form, elements) {
+  elements.forEach(function (element) {
+    form.querySelectorAll(element).forEach(function (chosenElement) {
+      chosenElement.disabled = false;
+    });
+  });
+};
+
+var disableForms = function (forms) {
+  forms.forEach(function (form) {
+    disableFormElements(form, ['select', 'fieldset']);
+  });
+};
+
+var enableForms = function (forms) {
+  forms.forEach(function (form) {
+    enableFormElements(form, ['select', 'fieldset']);
+  });
+};
+
+var fillAddressElement = function (form, element, value) {
+  form.querySelector(element).value = value;
 };
 
 // Generators
@@ -138,9 +219,16 @@ var generatePinsArray = function (ads) {
 var fillApplictationWithMocData = function () {
   var mockAds = generateAdsArray(8);
   var mockPins = generatePinsArray(mockAds);
-  showMap(mapSelector, fadingClassName);
+  disableForms([mapFiltersForm, adForm]);
+  fillAddressElement(adForm, 'input[name="address"]', calculateInitialMainPinCoordinates());
   var fragment = document.createDocumentFragment();
   renderPins(pinsPlacementSelector, mockPins, fragment);
 };
 
+var applyEventHandlers = function () {
+  mainPin.addEventListener('click', onMainPinClick);
+  mainPin.addEventListener('mouseup', onMainPinMouseup);
+};
+
 fillApplictationWithMocData();
+applyEventHandlers();
