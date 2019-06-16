@@ -8,6 +8,11 @@ var mainPin = document.querySelector('.map__pin--main');
 var map = document.querySelector('.map');
 var FORMS = [adForm, mapFiltersForm];
 
+// Initial Data
+var MAIN_PIN_LENGTH = 22;
+var TOP_MAIN_PIN_COORDINATES = mainPin.offsetTop + Math.floor(mainPin.offsetHeight / 2);
+var LEFT_MAIN_PIN_COORDINATES = mainPin.offsetLeft + Math.floor(mainPin.offsetWidth / 2);
+
 // Selectors
 var overlaySelector = '.map__overlay';
 var pinTemplateSelector = '#pin';
@@ -27,15 +32,35 @@ var MAX_Y = 630;
 
 // Event Handlers Functions
 
-var activateApplication = function () {
+var onMainPinClick = function () {
   enableForms(FORMS);
   disableMapFade(map);
   activateAdForm(adForm);
 };
 
+var onMainPinMouseup = function () {
+  fillAddressElement(adForm, 'input[name="address"]', calculateMainPinCoordinates());
+};
+
 // Support
 var pickRandomIndex = function (length) {
   return Math.floor(Math.random() * length);
+};
+
+var calculateInitialMainPinCoordinates = function () {
+  return LEFT_MAIN_PIN_COORDINATES + ', ' + TOP_MAIN_PIN_COORDINATES;
+};
+
+var calculateMainPinCoordinates = function () {
+  return getXCoordinates(mainPin) + ', ' + getYCoordinates(mainPin);
+};
+
+var getXCoordinates = function (pin) {
+  return pin.offsetLeft + Math.floor(pin.offsetWidth / 2);
+};
+
+var getYCoordinates = function (pin) {
+  return pin.offsetTop + pin.offsetHeight + MAIN_PIN_LENGTH;
 };
 
 // DOM manipulation
@@ -100,6 +125,10 @@ var enableForms = function (forms) {
   forms.forEach(function (form) {
     enableFormElements(form, ['select', 'fieldset']);
   });
+};
+
+var fillAddressElement = function (form, element, value) {
+  form.querySelector(element).value = value;
 };
 
 // Generators
@@ -191,12 +220,14 @@ var fillApplictationWithMocData = function () {
   var mockAds = generateAdsArray(8);
   var mockPins = generatePinsArray(mockAds);
   disableForms([mapFiltersForm, adForm]);
+  fillAddressElement(adForm, 'input[name="address"]', calculateInitialMainPinCoordinates());
   var fragment = document.createDocumentFragment();
   renderPins(pinsPlacementSelector, mockPins, fragment);
 };
 
 var applyEventHandlers = function () {
-  mainPin.addEventListener('click', activateApplication);
+  mainPin.addEventListener('click', onMainPinClick);
+  mainPin.addEventListener('mouseup', onMainPinMouseup);
 };
 
 fillApplictationWithMocData();
