@@ -39,7 +39,6 @@ var MIN_Y = 130;
 var MAX_Y = 630;
 
 // Event Handlers Functions
-
 var onMainPinClick = function () {
   enableForms(FORMS);
   disableMapFade(map);
