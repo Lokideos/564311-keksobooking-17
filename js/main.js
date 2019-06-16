@@ -6,12 +6,20 @@ var adForm = document.querySelector('.ad-form');
 var mapFiltersForm = document.querySelector('.map__filters');
 var mainPin = document.querySelector('.map__pin--main');
 var map = document.querySelector('.map');
+var appartmentType = adForm.querySelector('select[name="type"]');
+var minPrice = adForm.querySelector('input[name="price"]');
 var FORMS = [adForm, mapFiltersForm];
 
 // Initial Data
 var MAIN_PIN_LENGTH = 22;
 var TOP_MAIN_PIN_COORDINATES = mainPin.offsetTop + Math.floor(mainPin.offsetHeight / 2);
 var LEFT_MAIN_PIN_COORDINATES = mainPin.offsetLeft + Math.floor(mainPin.offsetWidth / 2);
+var PRICE_BY_TYPE = {
+  'bungalo': '0',
+  'flat': '1000',
+  'house': '5000',
+  'palace': '10000'
+};
 
 // Selectors
 var overlaySelector = '.map__overlay';
@@ -40,6 +48,10 @@ var onMainPinClick = function () {
 
 var onMainPinMouseup = function () {
   fillAddressElement(adForm, 'input[name="address"]', calculateMainPinCoordinates());
+};
+
+var onAppartmentTypeSelect = function () {
+  changeMinPrice();
 };
 
 // Support
@@ -129,6 +141,12 @@ var enableForms = function (forms) {
 
 var fillAddressElement = function (form, element, value) {
   form.querySelector(element).value = value;
+};
+
+var changeMinPrice = function () {
+  var type = appartmentType.options[appartmentType.selectedIndex].value;
+  minPrice.placeholder = PRICE_BY_TYPE[type];
+  minPrice.min = PRICE_BY_TYPE[type];
 };
 
 // Generators
@@ -228,6 +246,7 @@ var fillApplictationWithMocData = function () {
 var applyEventHandlers = function () {
   mainPin.addEventListener('click', onMainPinClick);
   mainPin.addEventListener('mouseup', onMainPinMouseup);
+  appartmentType.addEventListener('change', onAppartmentTypeSelect);
 };
 
 fillApplictationWithMocData();
