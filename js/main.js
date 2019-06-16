@@ -6,18 +6,29 @@ var adForm = document.querySelector('.ad-form');
 var mapFiltersForm = document.querySelector('.map__filters');
 var mainPin = document.querySelector('.map__pin--main');
 var map = document.querySelector('.map');
+var appartmentType = adForm.querySelector('select[name="type"]');
+var minPrice = adForm.querySelector('input[name="price"]');
+var timeIn = adForm.querySelector('select[name="timein"');
+var timeOut = adForm.querySelector('select[name="timeout"');
 var FORMS = [adForm, mapFiltersForm];
 
 // Initial Data
 var MAIN_PIN_LENGTH = 22;
 var TOP_MAIN_PIN_COORDINATES = mainPin.offsetTop + Math.floor(mainPin.offsetHeight / 2);
 var LEFT_MAIN_PIN_COORDINATES = mainPin.offsetLeft + Math.floor(mainPin.offsetWidth / 2);
+var PRICE_BY_TYPE = {
+  'bungalo': '0',
+  'flat': '1000',
+  'house': '5000',
+  'palace': '10000'
+};
 
 // Selectors
 var overlaySelector = '.map__overlay';
 var pinTemplateSelector = '#pin';
 var pinFragmentSelector = '.map__pin';
 var pinsPlacementSelector = '.map__pins';
+var SELECTORS_TO_TOGGLE = ['select', 'fieldset'];
 
 // Class names
 var FADING_MAP_FORM_CLASS = 'map--faded';
@@ -31,7 +42,6 @@ var MIN_Y = 130;
 var MAX_Y = 630;
 
 // Event Handlers Functions
-
 var onMainPinClick = function () {
   enableForms(FORMS);
   disableMapFade(map);
@@ -40,6 +50,18 @@ var onMainPinClick = function () {
 
 var onMainPinMouseup = function () {
   fillAddressElement(adForm, 'input[name="address"]', calculateMainPinCoordinates());
+};
+
+var onAppartmentTypeChange = function () {
+  changeMinPrice();
+};
+
+var onTimeInChange = function () {
+  changeTimeOutTime();
+};
+
+var onTimeOutChange = function () {
+  changeTimInTime();
 };
 
 // Support
@@ -99,36 +121,42 @@ var adjustYLocation = function (yCoordinate) {
   return yCoordinate + document.querySelector('.map__pin').offsetHeight;
 };
 
-var disableFormElements = function (form, elements) {
-  elements.forEach(function (element) {
-    form.querySelectorAll(element).forEach(function (chosenElement) {
-      chosenElement.disabled = true;
-    });
-  });
-};
-
-var enableFormElements = function (form, elements) {
-  elements.forEach(function (element) {
-    form.querySelectorAll(element).forEach(function (chosenElement) {
-      chosenElement.disabled = false;
+var toggleFormSelectors = function (form, toggleValue) {
+  SELECTORS_TO_TOGGLE.forEach(function (selector) {
+    form.querySelectorAll(selector).forEach(function (chosenSelector) {
+      chosenSelector.disabled = toggleValue;
     });
   });
 };
 
 var disableForms = function (forms) {
   forms.forEach(function (form) {
-    disableFormElements(form, ['select', 'fieldset']);
+    toggleFormSelectors(form, true);
   });
 };
 
 var enableForms = function (forms) {
   forms.forEach(function (form) {
-    enableFormElements(form, ['select', 'fieldset']);
+    toggleFormSelectors(form, false);
   });
 };
 
 var fillAddressElement = function (form, element, value) {
   form.querySelector(element).value = value;
+};
+
+var changeMinPrice = function () {
+  var type = appartmentType.options[appartmentType.selectedIndex].value;
+  minPrice.placeholder = PRICE_BY_TYPE[type];
+  minPrice.min = PRICE_BY_TYPE[type];
+};
+
+var changeTimeOutTime = function () {
+  timeOut.selectedIndex = timeIn.selectedIndex;
+};
+
+var changeTimInTime = function () {
+  timeIn.selectedIndex = timeOut.selectedIndex;
 };
 
 // Generators
@@ -228,6 +256,9 @@ var fillApplictationWithMocData = function () {
 var applyEventHandlers = function () {
   mainPin.addEventListener('click', onMainPinClick);
   mainPin.addEventListener('mouseup', onMainPinMouseup);
+  appartmentType.addEventListener('change', onAppartmentTypeChange);
+  timeIn.addEventListener('change', onTimeInChange);
+  timeOut.addEventListener('change', onTimeOutChange);
 };
 
 fillApplictationWithMocData();
