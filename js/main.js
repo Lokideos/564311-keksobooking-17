@@ -14,6 +14,11 @@ var FORMS = [adForm, mapFiltersForm];
 
 // Initial Data
 var MAIN_PIN_LENGTH = 22;
+var MAP_PIN_MAX_Y = 630;
+var MAP_PIN_MIN_Y = 130;
+var MAP_PIN_MAX_X = 1120;
+var MAP_PIN_MIN_X = 10;
+var SAFE_VERTICAL_GAP = 15;
 var TOP_MAIN_PIN_COORDINATES = mainPin.offsetTop + Math.floor(mainPin.offsetHeight / 2);
 var LEFT_MAIN_PIN_COORDINATES = mainPin.offsetLeft + Math.floor(mainPin.offsetWidth / 2);
 var PRICE_BY_TYPE = {
@@ -67,6 +72,8 @@ var onMainPinMousedown = function (evt) {
 
     mainPin.style.top = (mainPin.offsetTop - shift.y) + 'px';
     mainPin.style.left = (mainPin.offsetLeft - shift.x) + 'px';
+
+    setMainPinLimitations();
   };
 
   var onMouseUp = function (upEvt) {
@@ -189,6 +196,24 @@ var changeTimeOutTime = function () {
 
 var changeTimInTime = function () {
   timeIn.selectedIndex = timeOut.selectedIndex;
+};
+
+var setMainPinLimitations = function () {
+  if (mainPin.offsetTop > MAP_PIN_MAX_Y) {
+    mainPin.style.top = MAP_PIN_MAX_Y - MAIN_PIN_LENGTH + 'px';
+  }
+
+  if (mainPin.offsetTop < MAP_PIN_MIN_Y) {
+    mainPin.style.top = MAP_PIN_MIN_Y - MAIN_PIN_LENGTH + SAFE_VERTICAL_GAP + 'px';
+  }
+
+  if (mainPin.offsetLeft > MAP_PIN_MAX_X) {
+    mainPin.style.left = MAP_PIN_MAX_X + 'px';
+  }
+
+  if (mainPin.offsetLeft < MAP_PIN_MIN_X) {
+    mainPin.style.left = MAP_PIN_MIN_X + 'px';
+  }
 };
 
 // Generators
