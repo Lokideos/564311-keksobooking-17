@@ -12,6 +12,10 @@
   var MAP_PIN_MAX_X = 1120;
   var MAP_PIN_MIN_X = 10;
   var SAFE_VERTICAL_GAP = 15;
+  var POINTER_MAX_Y = 400;
+  var POINTER_MIN_Y = 100;
+  var POINTER_MAX_X = 1420;
+  var POINTER_MIN_X = 250;
 
   var setMainPinLimitations = function () {
     if (mainPin.offsetTop > MAP_PIN_MAX_Y) {
@@ -52,8 +56,13 @@
         y: moveEvt.clientY
       };
 
-      mainPin.style.top = (mainPin.offsetTop - shift.y) + 'px';
-      mainPin.style.left = (mainPin.offsetLeft - shift.x) + 'px';
+      if (moveEvt.clientY < POINTER_MAX_Y && moveEvt.clientY > POINTER_MIN_Y) {
+        mainPin.style.top = (mainPin.offsetTop - shift.y) + 'px';
+      }
+
+      if (moveEvt.clientX < POINTER_MAX_X && moveEvt.clientX > POINTER_MIN_X) {
+        mainPin.style.left = (mainPin.offsetLeft - shift.x) + 'px';
+      }
 
       setMainPinLimitations();
     };
