@@ -2,7 +2,12 @@
 
 (function () {
   // Initialize
+  // DOM Elements
+  var main = document.querySelector('main');
+
   // Selectors
+  var errorTemplateSelector = '#error';
+  var errorFragmentSelector = '.error';
   var pinTemplateSelector = '#pin';
   var pinFragmentSelector = '.map__pin';
   var pinsPlacementSelector = '.map__pins';
@@ -73,11 +78,20 @@
     canvas.appendChild(fragment);
   };
 
-  // Runtime
-  window.xhr.load(function (data) {
+  // Event handlers functions
+  var onSuccessHandler = function (data) {
     var ads = generateAdsArray(data);
     var pinsData = generatePinsArray(ads);
     var fragment = document.createDocumentFragment();
     renderPins(pinsPlacementSelector, pinsData, fragment);
-  });
+  };
+
+  var onErrorHandler = function () {
+    var error = getTemplateFragment(errorTemplateSelector, errorFragmentSelector).cloneNode(true);
+    var fragment = document.createDocumentFragment();
+    main.appendChild(fragment.appendChild(error));
+  };
+
+  // Runtime
+  window.xhr.load(onSuccessHandler, onErrorHandler);
 })();

@@ -4,7 +4,7 @@
   var GET_PINS_RESOURCE = 'https://js.dump.academy/keksobooking/data';
 
   window.xhr = {
-    load: function (onLoad) {
+    load: function (onLoad, onError) {
       var xhr = new XMLHttpRequest();
       xhr.responseType = 'json';
 
@@ -15,7 +15,7 @@
           case 200:
             return onLoad(xhr.response);
           default:
-            return xhr.status;
+            return onError(xhr.status);
         }
       });
 
