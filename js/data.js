@@ -45,12 +45,9 @@
   };
 
   var generateAdsArray = function (adsData) {
-    var ads = [];
-    adsData.forEach(function (ad) {
-      ads.push(generateAd(ad));
+    return adsData.map(function (ad) {
+      return generateAd(ad);
     });
-
-    return ads;
   };
 
   var generatePin = function (ad) {

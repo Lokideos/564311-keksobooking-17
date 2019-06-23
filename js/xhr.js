@@ -15,7 +15,7 @@
           case 200:
             return onLoad(xhr.response);
           default:
-            return onError(xhr.status);
+            return onError();
         }
       });
 
