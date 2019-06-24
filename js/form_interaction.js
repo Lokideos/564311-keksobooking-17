@@ -68,6 +68,8 @@
     enableForms(FORMS);
     disableMapFade(map);
     activateAdForm(adForm);
+
+    mainPin.removeEventListener('mousedown', onMainPinMousedown);
   };
 
   // DOM manipulation
