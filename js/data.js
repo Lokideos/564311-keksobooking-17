@@ -3,6 +3,7 @@
 (function () {
   // Initialize
   var advertisments = [];
+  var MAX_RENDERED_PINS = 5;
   // DOM Elements
   var main = document.querySelector('main');
 
@@ -79,7 +80,7 @@
   // Event handlers functions
   var onSuccessHandler = function (data) {
     advertisments = generateAdsArray(data);
-    var pinsData = generatePinsArray(advertisments.slice(0, 5));
+    var pinsData = generatePinsArray(advertisments.slice(0, MAX_RENDERED_PINS));
     var fragment = document.createDocumentFragment();
     renderPins(pinsPlacementSelector, pinsData, fragment);
   };
@@ -119,7 +120,7 @@
   window.rendering = {
     reRenderPins: function () {
       var sortedAds = sortAds(advertisments);
-      var pinsData = generatePinsArray(sortedAds.slice(0, 5));
+      var pinsData = generatePinsArray(sortedAds.slice(0, MAX_RENDERED_PINS));
       var fragment = document.createDocumentFragment();
       var oldPinsArray = document.querySelector('.map__pins').querySelectorAll('.map__pin');
 
