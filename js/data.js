@@ -121,14 +121,18 @@
     reRenderPins: function () {
       var housingType = window.data.getHousingType();
       var sortedAds = sortAds(advertisments);
-      var adsToRender = sortedAds.filter(ad => ad.offer.type === housingType);
+      var adsToRender = sortedAds.filter(function (ad) {
+        if (ad.offer.type === housingType) {
+          return ad;
+        }
+      });
 
       var maxPins = MAX_RENDERED_PINS;
       if (adsToRender.myLength < maxPins) {
         maxPins = adsToRender.myLength;
       }
 
-      var pinsData = generatePinsArray(myAds.slice(0, maxPins));
+      var pinsData = generatePinsArray(adsToRender.slice(0, maxPins));
       var fragment = document.createDocumentFragment();
       var oldPinsArray = document.querySelector('.map__pins').querySelectorAll('.map__pin');
 
