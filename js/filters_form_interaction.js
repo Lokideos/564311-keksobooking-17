@@ -13,7 +13,7 @@
   var mapFiltersForm = document.querySelector('.map__filters');
   var housingFilter = mapFiltersForm.querySelector('select[name=housing-type');
 
-  // Support
+  // Global functions
   window.data = {
     getHousingType: function () {
       return housingTypes[housingFilter[housingFilter.selectedIndex].innerText];

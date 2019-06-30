@@ -115,6 +115,7 @@
     });
   };
 
+  // Global functions
   window.rendering = {
     reRenderPins: function () {
       var sortedAds = sortAds(advertisments);
