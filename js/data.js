@@ -125,6 +125,7 @@
         if (ad.offer.type === housingType) {
           return ad;
         }
+        return null;
       });
 
       var maxPins = MAX_RENDERED_PINS;
