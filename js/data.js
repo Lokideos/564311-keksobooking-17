@@ -119,8 +119,16 @@
   // Global functions
   window.rendering = {
     reRenderPins: function () {
+      var housingType = window.data.getHousingType();
       var sortedAds = sortAds(advertisments);
-      var pinsData = generatePinsArray(sortedAds.slice(0, MAX_RENDERED_PINS));
+      var adsToRender = sortedAds.filter(ad => ad.offer.type === housingType);
+
+      var maxPins = MAX_RENDERED_PINS;
+      if (adsToRender.myLength < maxPins) {
+        maxPins = adsToRender.myLength;
+      }
+
+      var pinsData = generatePinsArray(myAds.slice(0, maxPins));
       var fragment = document.createDocumentFragment();
       var oldPinsArray = document.querySelector('.map__pins').querySelectorAll('.map__pin');
 
