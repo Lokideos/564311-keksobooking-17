@@ -6,8 +6,8 @@
   var adForm = document.querySelector('.ad-form');
   var mapFiltersForm = document.querySelector('.map__filters');
   var appartmentType = adForm.querySelector('select[name="type"]');
-  var timeIn = adForm.querySelector('select[name="timein"');
-  var timeOut = adForm.querySelector('select[name="timeout"');
+  var timeIn = adForm.querySelector('select[name="timein"]');
+  var timeOut = adForm.querySelector('select[name="timeout"]');
   var minPrice = adForm.querySelector('input[name="price"]');
   var mainPin = document.querySelector('.map__pin--main');
   var map = document.querySelector('.map');
