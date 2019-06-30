@@ -80,7 +80,7 @@
     var ads = generateAdsArray(data);
     var pinsData = generatePinsArray(ads);
     var fragment = document.createDocumentFragment();
-    renderPins(pinsPlacementSelector, pinsData, fragment);
+    renderPins(pinsPlacementSelector, pinsData.slice(0, 5), fragment);
   };
 
   var onErrorHandler = function () {
