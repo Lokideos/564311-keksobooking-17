@@ -2,6 +2,7 @@
 
 (function () {
   // Initialize
+  var advertisments = [];
   // DOM Elements
   var main = document.querySelector('main');
 
@@ -77,16 +78,58 @@
 
   // Event handlers functions
   var onSuccessHandler = function (data) {
-    var ads = generateAdsArray(data);
-    var pinsData = generatePinsArray(ads);
+    advertisments = generateAdsArray(data);
+    var pinsData = generatePinsArray(advertisments.slice(0, 5));
     var fragment = document.createDocumentFragment();
-    renderPins(pinsPlacementSelector, pinsData.slice(0, 5), fragment);
+    renderPins(pinsPlacementSelector, pinsData, fragment);
   };
 
   var onErrorHandler = function () {
     var error = getTemplateFragment(errorTemplateSelector, errorFragmentSelector).cloneNode(true);
     var fragment = document.createDocumentFragment();
     main.appendChild(fragment.appendChild(error));
+  };
+
+  var getRating = function (ad) {
+    var rating = 0;
+    var housingType = window.data.getHousingType();
+
+    if (ad.offer.type === housingType) {
+      rating += 1;
+    }
+
+    return rating;
+  };
+
+  var sortAds = function (ads) {
+    return ads.slice().sort(function (leftAd, rightAd) {
+      var leftRating = getRating(leftAd);
+      var rightRating = getRating(rightAd);
+      if (leftRating < rightRating) {
+        return 1;
+      }
+      if (leftRating > rightRating) {
+        return -1;
+      }
+      return 0;
+    });
+  };
+
+  window.rendering = {
+    reRenderPins: function () {
+      var sortedAds = sortAds(advertisments);
+      var pinsData = generatePinsArray(sortedAds.slice(0, 5));
+      var fragment = document.createDocumentFragment();
+      var oldPinsArray = document.querySelector('.map__pins').querySelectorAll('.map__pin');
+
+      oldPinsArray.forEach(function (pin) {
+        if (!pin.classList.contains('map__pin--main')) {
+          pin.remove();
+        }
+      });
+
+      renderPins(pinsPlacementSelector, pinsData, fragment);
+    }
   };
 
   // Runtime
