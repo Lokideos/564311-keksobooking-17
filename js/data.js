@@ -33,6 +33,48 @@
       .querySelector(templateFragment);
   };
 
+  var getPinsQuantity = function (pinsCount) {
+    if (pinsCount < MAX_RENDERED_PINS) {
+      return pinsCount;
+    }
+    return MAX_RENDERED_PINS;
+  };
+
+  var getRating = function (ad) {
+    var rating = 0;
+    var housingType = window.data.getHousingType();
+
+    if (ad.offer.type === housingType) {
+      rating += 1;
+    }
+
+    return rating;
+  };
+
+  var sortAds = function (ads) {
+    return ads.slice().sort(function (leftAd, rightAd) {
+      var leftRating = getRating(leftAd);
+      var rightRating = getRating(rightAd);
+      if (leftRating < rightRating) {
+        return 1;
+      }
+      if (leftRating > rightRating) {
+        return -1;
+      }
+      return 0;
+    });
+  };
+
+  var getAdsOfType = function (ads) {
+    var housingType = window.data.getHousingType();
+    return ads.filter(function (ad) {
+      if (ad.offer.type === housingType) {
+        return ad;
+      }
+      return null;
+    });
+  };
+
   // Data generation
   var generateAd = function (ad) {
     return {
@@ -91,49 +133,12 @@
     main.appendChild(fragment.appendChild(error));
   };
 
-  var getRating = function (ad) {
-    var rating = 0;
-    var housingType = window.data.getHousingType();
-
-    if (ad.offer.type === housingType) {
-      rating += 1;
-    }
-
-    return rating;
-  };
-
-  var sortAds = function (ads) {
-    return ads.slice().sort(function (leftAd, rightAd) {
-      var leftRating = getRating(leftAd);
-      var rightRating = getRating(rightAd);
-      if (leftRating < rightRating) {
-        return 1;
-      }
-      if (leftRating > rightRating) {
-        return -1;
-      }
-      return 0;
-    });
-  };
-
   // Global functions
   window.rendering = {
     reRenderPins: function () {
-      var housingType = window.data.getHousingType();
-      var sortedAds = sortAds(advertisments);
-      var adsToRender = sortedAds.filter(function (ad) {
-        if (ad.offer.type === housingType) {
-          return ad;
-        }
-        return null;
-      });
+      var adsToRender = getAdsOfType(sortAds(advertisments));
 
-      var maxPins = MAX_RENDERED_PINS;
-      if (adsToRender.myLength < maxPins) {
-        maxPins = adsToRender.myLength;
-      }
-
-      var pinsData = generatePinsArray(adsToRender.slice(0, maxPins));
+      var pinsData = generatePinsArray(adsToRender.slice(0, getPinsQuantity(adsToRender.length)));
       var fragment = document.createDocumentFragment();
       var oldPinsArray = document.querySelector('.map__pins').querySelectorAll('.map__pin');
 
