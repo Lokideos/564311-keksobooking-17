@@ -142,7 +142,7 @@
       fragment.appendChild(pin);
 
       pin.addEventListener('click', function () {
-        var currentAd = map.querySelector('.card-placement');
+        var currentAd = map.querySelector('.map__card');
         if (currentAd) {
           currentAd.remove();
         }
@@ -216,27 +216,19 @@
   };
 
   var renderCard = function (card) {
-    var cardFragment = document.createDocumentFragment();
-    var cardPlace = document.createElement('div');
-    cardPlace.classList.add('card-placement');
-
-    var canvas = cardPlace;
-    cardFragment.appendChild(card);
-
-    cardFragment.querySelector('.popup__close').addEventListener('click', function () {
-      map.querySelector('.card-placement').remove();
+    card.querySelector('.popup__close').addEventListener('click', function () {
+      map.querySelector('.map__card').remove();
     });
 
     document.addEventListener('keydown', onSetupEscPress);
 
-    canvas.appendChild(cardFragment);
-    map.insertBefore(canvas, document.querySelector(filtersSelector));
+    map.insertBefore(card, document.querySelector(filtersSelector));
   };
 
   // Event handlers functions
   var onSetupEscPress = function (evt) {
     if (evt.keyCode === ESC_KEYCODE) {
-      map.querySelector('.card-placement').remove();
+      map.querySelector('.map__card').remove();
 
       document.removeEventListener('keydown', onSetupEscPress);
     }
