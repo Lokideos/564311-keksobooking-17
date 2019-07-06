@@ -173,9 +173,11 @@
   };
 
   var generateCardFeatures = function (parentListElement, features) {
-    features.forEach(function (feature) {
-      if (CORRECT_FEATURES.includes(feature)) {
+    CORRECT_FEATURES.forEach(function (feature) {
+      if (features.includes(feature)) {
         parentListElement.querySelector('.popup__feature--' + feature).innerText = feature;
+      } else {
+        parentListElement.querySelector('.popup__feature--' + feature).remove();
       }
     });
   };
@@ -194,7 +196,7 @@
     var cardPlace = document.createElement('div');
 
     var canvas = cardPlace;
-    fragment.appendChild(cardData[0]);
+    fragment.appendChild(cardData[1]);
 
     canvas.appendChild(fragment);
     map.insertBefore(canvas, document.querySelector(filtersSelector));
@@ -203,6 +205,7 @@
   // Event handlers functions
   var onSuccessHandler = function (data) {
     advertisments = generateAdsArray(data);
+    console.log(advertisments);
     var pinsData = generatePinsArray(advertisments.slice(0, MAX_RENDERED_PINS));
     var cardsData = generateCardsArray(advertisments);
     var pinFragment = document.createDocumentFragment();
