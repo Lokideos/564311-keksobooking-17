@@ -190,11 +190,17 @@
   };
 
   var generateCardFeatures = function (parentListElement, features) {
+    while (parentListElement.firstChild) {
+      parentListElement.removeChild(parentListElement.firstChild);
+    }
+
     CORRECT_FEATURES.forEach(function (feature) {
       if (features.includes(feature)) {
-        parentListElement.querySelector('.popup__feature--' + feature).innerText = feature;
-      } else {
-        parentListElement.querySelector('.popup__feature--' + feature).remove();
+        var listElement = document.createElement('li');
+        listElement.classList.add('popup__feature');
+        listElement.classList.add('popup__feature--' + feature);
+        listElement.innerText = feature;
+        parentListElement.appendChild(listElement);
       }
     });
   };
