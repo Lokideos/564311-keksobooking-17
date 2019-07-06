@@ -2,6 +2,7 @@
 
 (function () {
   // Initialize
+  var ESC_KEYCODE = 27;
   var advertisments = [];
   var cardsData = [];
   var MAX_RENDERED_PINS = 5;
@@ -218,11 +219,25 @@
     var canvas = cardPlace;
     cardFragment.appendChild(cardData[index]);
 
+    cardFragment.querySelector('.popup__close').addEventListener('click', function () {
+      map.querySelector('.card-placement').remove();
+    });
+
+    document.addEventListener('keydown', onSetupEscPress);
+
     canvas.appendChild(cardFragment);
     map.insertBefore(canvas, document.querySelector(filtersSelector));
   };
 
   // Event handlers functions
+  var onSetupEscPress = function (evt) {
+    if (evt.keyCode === ESC_KEYCODE) {
+      map.querySelector('.card-placement').remove();
+
+      document.removeEventListener('keydown', onSetupEscPress);
+    }
+  };
+
   var onSuccessHandler = function (data) {
     advertisments = generateAdsArray(data);
     cardsData = generateCardsArray(advertisments);
