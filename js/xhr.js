@@ -2,6 +2,7 @@
 
 (function () {
   // Initialize
+  var ESC_KEYCODE = 27;
   var GET_PINS_RESOURCE = 'https://js.dump.academy/keksobooking/data';
   var DATA_UPLOAD_RESOURCE = 'https://js.dump.academy/keksobooking';
   var errorTemplateSelector = '#error';
@@ -14,6 +15,26 @@
     return document.querySelector(templateId)
       .content
       .querySelector(templateFragment);
+  };
+
+  // Event handlers functions
+  var onErrorButtonClick = function () {
+    main.querySelector('.error').remove();
+    document.removeEventListener('keydown', onEscKeyPressed);
+  };
+
+  var onEscKeyPressed = function (evt) {
+    if (evt.keyCode === ESC_KEYCODE) {
+      main.querySelector('.error').remove();
+      document.removeEventListener('keydown', onEscKeyPressed);
+      document.removeEventListener('click', onDocumentClick);
+    }
+  };
+
+  var onDocumentClick = function () {
+    main.querySelector('.error').remove();
+    document.removeEventListener('keydown', onEscKeyPressed);
+    document.removeEventListener('click', onDocumentClick);
   };
 
   window.xhr = {
@@ -55,6 +76,10 @@
       var error = getTemplateFragment(errorTemplateSelector, errorFragmentSelector).cloneNode(true);
       var fragment = document.createDocumentFragment();
       main.appendChild(fragment.appendChild(error));
+
+      main.querySelector('.error .error__button').addEventListener('click', onErrorButtonClick);
+      document.addEventListener('keydown', onEscKeyPressed);
+      document.addEventListener('click', onDocumentClick);
     }
   };
 })();
