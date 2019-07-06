@@ -5,6 +5,12 @@
   var advertisments = [];
   var MAX_RENDERED_PINS = 5;
   var CORRECT_FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
+  var APPARTMENT_TYPES = {
+    flat: 'Квартира',
+    bungalo: 'Бунгало',
+    house: 'Дом',
+    palace: 'Дворец'
+  };
   // DOM Elements
   var main = document.querySelector('main');
   var map = main.querySelector('.map');
@@ -91,7 +97,7 @@
         'title': ad.offer.title,
         'address': ad.offer.address,
         'price': ad.offer.price,
-        'type': ad.offer.type,
+        'type': APPARTMENT_TYPES[ad.offer.type],
         'rooms': ad.offer.rooms,
         'guests': ad.offer.guests,
         'checkin': ad.offer.checkin,
@@ -196,7 +202,7 @@
     var cardPlace = document.createElement('div');
 
     var canvas = cardPlace;
-    fragment.appendChild(cardData[1]);
+    fragment.appendChild(cardData[0]);
 
     canvas.appendChild(fragment);
     map.insertBefore(canvas, document.querySelector(filtersSelector));
@@ -205,7 +211,6 @@
   // Event handlers functions
   var onSuccessHandler = function (data) {
     advertisments = generateAdsArray(data);
-    console.log(advertisments);
     var pinsData = generatePinsArray(advertisments.slice(0, MAX_RENDERED_PINS));
     var cardsData = generateCardsArray(advertisments);
     var pinFragment = document.createDocumentFragment();
