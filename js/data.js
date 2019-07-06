@@ -56,7 +56,7 @@
 
   var getRating = function (ad) {
     var rating = 0;
-    var housingType = window.data.getHousingType();
+    var housingType = APPARTMENT_TYPES[window.data.getHousingType()];
 
     if (ad.offer.type === housingType) {
       rating += 1;
@@ -80,7 +80,7 @@
   };
 
   var getAdsOfType = function (ads) {
-    var housingType = window.data.getHousingType();
+    var housingType = APPARTMENT_TYPES[window.data.getHousingType()];
     return ads.filter(function (ad) {
       if (ad.offer.type === housingType) {
         return ad;
