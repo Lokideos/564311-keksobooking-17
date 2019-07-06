@@ -2,6 +2,7 @@
 
 (function () {
   // Initialize
+  var ESC_KEYCODE = 27;
   var initialFormState = {};
   var CAPACITY_FOR_ROOM_MATCHER = {
     '1 комната': ['для 1 гостя'],
@@ -31,6 +32,11 @@
   var address = adForm.querySelector('input[name="address"]');
   var description = adForm.querySelector('textarea[name="description"]');
   var features = adForm.querySelectorAll('input[name=features]');
+  var main = document.querySelector('main');
+
+  // Selectors
+  var successMessageTemplateSelector = '#success';
+  var successMessageFragmentSelector = '.success';
 
   // Initial data
   var PRICE_BY_TYPE = {
@@ -50,6 +56,12 @@
   var FADING_AD_FORM_CLASS = 'ad-form--disabled';
 
   // Support
+  var getTemplateFragment = function (templateId, templateFragment) {
+    return document.querySelector(templateId)
+      .content
+      .querySelector(templateFragment);
+  };
+
   var calculateInitialMainPinCoordinates = function () {
     return LEFT_MAIN_PIN_COORDINATES + ', ' + TOP_MAIN_PIN_COORDINATES;
   };
@@ -108,6 +120,17 @@
     mainPin.style = MAIN_PIN_INITIAL_STYLE;
   };
 
+  // DOM manipulation
+  var renderSuccessMessage = function () {
+    var fragment = document.createDocumentFragment();
+    var successMessage = getTemplateFragment(successMessageTemplateSelector, successMessageFragmentSelector).cloneNode(true);
+    fragment.appendChild(successMessage);
+
+    main.appendChild(fragment);
+    document.addEventListener('click', onDocumentClick);
+    document.addEventListener('keydown', onKeyPressed);
+  };
+
   // Event handler functions
   var onAppartmentTypeChange = function () {
     changeMinPrice();
@@ -140,8 +163,23 @@
     mainPin.removeEventListener('mousedown', onMainPinMousedown);
   };
 
+  var onDocumentClick = function () {
+    main.querySelector('.success').remove();
+    document.removeEventListener('click', onDocumentClick);
+    document.removeEventListener('keydown', onKeyPressed);
+  };
+
+  var onKeyPressed = function (evt) {
+    if (evt.keyCode === ESC_KEYCODE) {
+      main.querySelector('.success').remove();
+      document.removeEventListener('click', onDocumentClick);
+      document.removeEventListener('keydown', onKeyPressed);
+    }
+  };
+
   var onSuccessHandler = function () {
     resetAdForm();
+    renderSuccessMessage();
   };
 
   var onAdFormSubmit = function (evt) {
