@@ -144,6 +144,11 @@
     resetAdForm();
   };
 
+  var onAdFormSubmit = function (evt) {
+    evt.preventDefault();
+    window.xhr.save(new FormData(adForm), onSuccessHandler, window.xhr.onErrorHandler);
+  };
+
   // DOM manipulation
   var disableMapFade = function (fadedMap) {
     fadedMap.classList.remove(FADING_MAP_FORM_CLASS);
@@ -196,10 +201,6 @@
   fillAddressElement(adForm, 'input[name="address"]', calculateInitialMainPinCoordinates());
   captureInitialState(initialFormState);
   validateCapacityPerRoomCount(roomNumbers[roomNumbers.selectedIndex], capacity[capacity.selectedIndex]);
-  adForm.addEventListener('submit', function (evt) {
-    evt.preventDefault();
-    window.xhr.save(new FormData(adForm), onSuccessHandler, window.xhr.onErrorHandler);
-  });
 
   var applyEventHandlers = function () {
     mainPin.addEventListener('mouseup', onMainPinMouseup);
@@ -209,6 +210,7 @@
     roomNumbers.addEventListener('change', onRoomsOrCapacityChange);
     capacity.addEventListener('change', onRoomsOrCapacityChange);
     mainPin.addEventListener('mousedown', onMainPinMousedown);
+    adForm.addEventListener('submit', onAdFormSubmit);
   };
 
   applyEventHandlers();
