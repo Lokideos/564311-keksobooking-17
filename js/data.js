@@ -82,9 +82,22 @@
         'avatar': ad.author.avatar
       },
       'offer': {
-        'type': ad.offer.type
+        'title': ad.offer.title,
+        'address': ad.offer.address,
+        'price': ad.offer.price,
+        'type': ad.offer.type,
+        'rooms': ad.offer.rooms,
+        'guests': ad.offer.guests,
+        'checkin': ad.offer.checkin,
+        'checkout': ad.offer.checkout,
+        'features': ad.offer.features,
+        'description': ad.offer.description,
+        'photos': ad.offer.photos
       },
-      'location': ad.location
+      'location': {
+        'x': ad.location.x,
+        'y': ad.location.y
+      }
     };
   };
 
