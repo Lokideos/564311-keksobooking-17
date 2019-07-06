@@ -256,6 +256,7 @@
   window.rendering = {
     reRenderPins: function () {
       var adsToRender = getAdsOfType(sortAds(advertisments));
+      cardsData = generateCardsArray(adsToRender);
 
       var pinsData = generatePinsArray(adsToRender.slice(0, getPinsQuantity(adsToRender.length)));
       var fragment = document.createDocumentFragment();
