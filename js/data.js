@@ -147,7 +147,7 @@
           currentAd.remove();
         }
 
-        renderCard(cardsData, pin.dataset.adId);
+        renderCard(cardsData[pin.dataset.adId]);
       });
 
     });
@@ -209,13 +209,13 @@
     parentListElement.firstElementChild.remove();
   };
 
-  var renderCard = function (cardData, index) {
+  var renderCard = function (card) {
     var cardFragment = document.createDocumentFragment();
     var cardPlace = document.createElement('div');
     cardPlace.classList.add('card-placement');
 
     var canvas = cardPlace;
-    cardFragment.appendChild(cardData[index]);
+    cardFragment.appendChild(card);
 
     cardFragment.querySelector('.popup__close').addEventListener('click', function () {
       map.querySelector('.card-placement').remove();
