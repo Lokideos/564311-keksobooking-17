@@ -122,7 +122,7 @@
   var generatePin = function (ad, index) {
     var pin = getTemplateFragment(pinTemplateSelector, pinFragmentSelector).cloneNode(true);
     pin.style = 'left: ' + adjustXLocation(ad.location.x) + 'px; top: ' + adjustYLocation(ad.location.y) + 'px;';
-    pin.setAttribute('data-ad-id', index);
+    pin.dataset.adId = index;
     var pinImage = pin.querySelector('img');
     pinImage.src = ad.author.avatar;
     pinImage.alt = ad.offer.type;
