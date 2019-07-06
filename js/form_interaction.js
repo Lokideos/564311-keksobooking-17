@@ -2,6 +2,7 @@
 
 (function () {
   // Initialize
+  var initialFormState = {};
   var CAPACITY_FOR_ROOM_MATCHER = {
     '1 комната': ['для 1 гостя'],
     '2 комнаты': ['для 2 гостей', 'для 1 гостя'],
@@ -25,6 +26,11 @@
   var FORMS = [adForm, mapFiltersForm];
   var roomNumbers = adForm.querySelector('select[name="rooms"');
   var capacity = adForm.querySelector('select[name="capacity"');
+  var avatar = adForm.querySelector('.ad-form-header__preview img');
+  var title = adForm.querySelector('input[name="title"]');
+  var address = adForm.querySelector('input[name="address"]');
+  var description = adForm.querySelector('textarea[name="description"]');
+  var features = adForm.querySelectorAll('input[name=features]');
 
   // Initial data
   var PRICE_BY_TYPE = {
@@ -34,6 +40,7 @@
     'palace': '10000'
   };
   var SELECTORS_TO_TOGGLE = ['select', 'fieldset'];
+  var MAIN_PIN_INITIAL_STYLE = 'left: 570px; top: 375px';
   var TOP_MAIN_PIN_COORDINATES = mainPin.offsetTop + Math.floor(mainPin.offsetHeight / 2);
   var LEFT_MAIN_PIN_COORDINATES = mainPin.offsetLeft + Math.floor(mainPin.offsetWidth / 2);
   var MAIN_PIN_LENGTH = 22;
@@ -67,6 +74,40 @@
     return pin.offsetTop + pin.offsetHeight + MAIN_PIN_LENGTH;
   };
 
+  var captureInitialState = function () {
+    initialFormState = {
+      avatarLink: avatar.src,
+      titleText: title.value,
+      addressText: calculateInitialMainPinCoordinates(),
+      houseTypeIndex: appartmentType.selectedIndex,
+      priceText: minPrice.value,
+      pricePlaceholder: minPrice.placeholder,
+      roomsIndex: roomNumbers.selectedIndex,
+      capacityIndex: capacity.selectedIndex,
+      timeInIndex: timeIn.selectedIndex,
+      timeOutIndex: timeOut.selectedIndex,
+      descriptionText: description.value
+    };
+  };
+
+  var resetAdForm = function () {
+    avatar.src = initialFormState.avatarLink;
+    title.value = initialFormState.titleText;
+    description.value = initialFormState.descriptionText;
+    address.value = initialFormState.addressText;
+    minPrice.value = initialFormState.priceText;
+    minPrice.placeholder = initialFormState.pricePlaceholder;
+    appartmentType.selectedIndex = initialFormState.houseTypeIndex;
+    timeIn.selectedIndex = initialFormState.timeInIndex;
+    timeOut.selectedIndex = initialFormState.timeOutIndex;
+    roomNumbers.selectedIndex = initialFormState.roomsIndex;
+    capacity.selectedIndex = initialFormState.capacityIndex;
+    features.forEach(function (feature) {
+      feature.checked = false;
+    });
+    mainPin.style = MAIN_PIN_INITIAL_STYLE;
+  };
+
   // Event handler functions
   var onAppartmentTypeChange = function () {
     changeMinPrice();
@@ -97,6 +138,10 @@
     activateAdForm(adForm);
 
     mainPin.removeEventListener('mousedown', onMainPinMousedown);
+  };
+
+  var onSuccessHandler = function () {
+    resetAdForm();
   };
 
   // DOM manipulation
@@ -149,7 +194,12 @@
   // Runtime
   disableForms([mapFiltersForm, adForm]);
   fillAddressElement(adForm, 'input[name="address"]', calculateInitialMainPinCoordinates());
+  captureInitialState(initialFormState);
   validateCapacityPerRoomCount(roomNumbers[roomNumbers.selectedIndex], capacity[capacity.selectedIndex]);
+  adForm.addEventListener('submit', function (evt) {
+    evt.preventDefault();
+    window.xhr.save(new FormData(adForm), onSuccessHandler, window.xhr.onErrorHandler);
+  });
 
   var applyEventHandlers = function () {
     mainPin.addEventListener('mouseup', onMainPinMouseup);
