@@ -2,7 +2,9 @@
 
 (function () {
   // Initialize
+  var ESC_KEYCODE = 27;
   var advertisments = [];
+  var cardsData = [];
   var MAX_RENDERED_PINS = 5;
   var CORRECT_FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
   var APPARTMENT_TYPES = {
@@ -54,7 +56,7 @@
 
   var getRating = function (ad) {
     var rating = 0;
-    var housingType = window.data.getHousingType();
+    var housingType = APPARTMENT_TYPES[window.data.getHousingType()];
 
     if (ad.offer.type === housingType) {
       rating += 1;
@@ -78,7 +80,7 @@
   };
 
   var getAdsOfType = function (ads) {
-    var housingType = window.data.getHousingType();
+    var housingType = APPARTMENT_TYPES[window.data.getHousingType()];
     return ads.filter(function (ad) {
       if (ad.offer.type === housingType) {
         return ad;
@@ -119,9 +121,10 @@
     });
   };
 
-  var generatePin = function (ad) {
+  var generatePin = function (ad, index) {
     var pin = getTemplateFragment(pinTemplateSelector, pinFragmentSelector).cloneNode(true);
     pin.style = 'left: ' + adjustXLocation(ad.location.x) + 'px; top: ' + adjustYLocation(ad.location.y) + 'px;';
+    pin.setAttribute('data-ad-id', index);
     var pinImage = pin.querySelector('img');
     pinImage.src = ad.author.avatar;
     pinImage.alt = ad.offer.type;
@@ -130,8 +133,8 @@
   };
 
   var generatePinsArray = function (ads) {
-    return ads.map(function (ad) {
-      return generatePin(ad);
+    return ads.map(function (ad, index) {
+      return generatePin(ad, index);
     });
   };
 
@@ -139,6 +142,16 @@
     var canvas = document.querySelector(pinsPlacement);
     pinsData.forEach(function (pin) {
       fragment.appendChild(pin);
+
+      pin.addEventListener('click', function () {
+        var currentAd = map.querySelector('.card-placement');
+        if (currentAd) {
+          currentAd.remove();
+        }
+
+        renderCard(cardsData, pin.dataset.adId);
+      });
+
     });
 
     canvas.appendChild(fragment);
@@ -198,25 +211,39 @@
     parentListElement.firstElementChild.remove();
   };
 
-  var renderCards = function (cardData, fragment) {
+  var renderCard = function (cardData, index) {
+    var cardFragment = document.createDocumentFragment();
     var cardPlace = document.createElement('div');
+    cardPlace.classList.add('card-placement');
 
     var canvas = cardPlace;
-    fragment.appendChild(cardData[0]);
+    cardFragment.appendChild(cardData[index]);
 
-    canvas.appendChild(fragment);
+    cardFragment.querySelector('.popup__close').addEventListener('click', function () {
+      map.querySelector('.card-placement').remove();
+    });
+
+    document.addEventListener('keydown', onSetupEscPress);
+
+    canvas.appendChild(cardFragment);
     map.insertBefore(canvas, document.querySelector(filtersSelector));
   };
 
   // Event handlers functions
+  var onSetupEscPress = function (evt) {
+    if (evt.keyCode === ESC_KEYCODE) {
+      map.querySelector('.card-placement').remove();
+
+      document.removeEventListener('keydown', onSetupEscPress);
+    }
+  };
+
   var onSuccessHandler = function (data) {
     advertisments = generateAdsArray(data);
+    cardsData = generateCardsArray(advertisments);
     var pinsData = generatePinsArray(advertisments.slice(0, MAX_RENDERED_PINS));
-    var cardsData = generateCardsArray(advertisments);
     var pinFragment = document.createDocumentFragment();
-    var cardFragment = document.createDocumentFragment();
     renderPins(pinsPlacementSelector, pinsData, pinFragment);
-    renderCards(cardsData, cardFragment);
   };
 
   var onErrorHandler = function () {
@@ -229,6 +256,7 @@
   window.rendering = {
     reRenderPins: function () {
       var adsToRender = getAdsOfType(sortAds(advertisments));
+      cardsData = generateCardsArray(adsToRender);
 
       var pinsData = generatePinsArray(adsToRender.slice(0, getPinsQuantity(adsToRender.length)));
       var fragment = document.createDocumentFragment();

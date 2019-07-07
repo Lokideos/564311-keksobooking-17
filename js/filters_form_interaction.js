@@ -11,7 +11,7 @@
 
   // Selected DOM elements
   var mapFiltersForm = document.querySelector('.map__filters');
-  var housingFilter = mapFiltersForm.querySelector('select[name=housing-type');
+  var housingFilter = mapFiltersForm.querySelector('select[name=housing-type]');
 
   // Global functions
   window.data = {

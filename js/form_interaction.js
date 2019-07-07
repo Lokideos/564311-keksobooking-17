@@ -2,6 +2,17 @@
 
 (function () {
   // Initialize
+  var CAPACITY_FOR_ROOM_MATCHER = {
+    '1 комната': ['для 1 гостя'],
+    '2 комнаты': ['для 2 гостей', 'для 1 гостя'],
+    '3 комнаты': ['для 3 гостей', 'для 2 гостей', 'для 1 гостя'],
+    '100 комнат': ['не для гостей']
+  };
+
+  var CAPACITY_FOR_ROOM_ERROR_MESSAGE = 'Выбраное количество гостей не соответствует количеству комнат. ' +
+  'Пожалуйста, выберите подходящее количество гостей:' +
+  '1 комната - 1 гость, 2 комнаты - 1 или 2 гостя, 3 комнаты - 1, 2 или 3 гостя, 100 комнат - не для гостей';
+
   // Selected DOM elements
   var adForm = document.querySelector('.ad-form');
   var mapFiltersForm = document.querySelector('.map__filters');
@@ -12,6 +23,8 @@
   var mainPin = document.querySelector('.map__pin--main');
   var map = document.querySelector('.map');
   var FORMS = [adForm, mapFiltersForm];
+  var roomNumbers = adForm.querySelector('select[name="rooms"');
+  var capacity = adForm.querySelector('select[name="capacity"');
 
   // Initial data
   var PRICE_BY_TYPE = {
@@ -34,17 +47,12 @@
     return LEFT_MAIN_PIN_COORDINATES + ', ' + TOP_MAIN_PIN_COORDINATES;
   };
 
-  // Event handler functions
-  var onAppartmentTypeChange = function () {
-    changeMinPrice();
-  };
-
-  var onTimeInChange = function () {
-    changeTimeOutTime();
-  };
-
-  var onTimeOutChange = function () {
-    changeTimInTime();
+  var validateCapacityPerRoomCount = function (selectedRoomNumbers, selectedCapacity) {
+    if (!CAPACITY_FOR_ROOM_MATCHER[selectedRoomNumbers.innerText].includes(selectedCapacity.innerText)) {
+      capacity.setCustomValidity(CAPACITY_FOR_ROOM_ERROR_MESSAGE);
+    } else {
+      capacity.setCustomValidity('');
+    }
   };
 
   var calculateMainPinCoordinates = function () {
@@ -60,6 +68,25 @@
   };
 
   // Event handler functions
+  var onAppartmentTypeChange = function () {
+    changeMinPrice();
+  };
+
+  var onTimeInChange = function () {
+    changeTimeOutTime();
+  };
+
+  var onTimeOutChange = function () {
+    changeTimInTime();
+  };
+
+  var onRoomsOrCapacityChange = function () {
+    var selectedCapacity = capacity[capacity.selectedIndex];
+    var selectedRoomNumbers = roomNumbers[roomNumbers.selectedIndex];
+
+    validateCapacityPerRoomCount(selectedRoomNumbers, selectedCapacity);
+  };
+
   var onMainPinMouseup = function () {
     fillAddressElement(adForm, 'input[name="address"]', calculateMainPinCoordinates());
   };
@@ -122,12 +149,15 @@
   // Runtime
   disableForms([mapFiltersForm, adForm]);
   fillAddressElement(adForm, 'input[name="address"]', calculateInitialMainPinCoordinates());
+  validateCapacityPerRoomCount(roomNumbers[roomNumbers.selectedIndex], capacity[capacity.selectedIndex]);
 
   var applyEventHandlers = function () {
     mainPin.addEventListener('mouseup', onMainPinMouseup);
     appartmentType.addEventListener('change', onAppartmentTypeChange);
     timeIn.addEventListener('change', onTimeInChange);
     timeOut.addEventListener('change', onTimeOutChange);
+    roomNumbers.addEventListener('change', onRoomsOrCapacityChange);
+    capacity.addEventListener('change', onRoomsOrCapacityChange);
     mainPin.addEventListener('mousedown', onMainPinMousedown);
   };
 
