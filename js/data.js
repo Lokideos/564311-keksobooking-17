@@ -18,8 +18,6 @@
   var map = main.querySelector('.map');
 
   // Selectors
-  var errorTemplateSelector = '#error';
-  var errorFragmentSelector = '.error';
   var pinTemplateSelector = '#pin';
   var pinFragmentSelector = '.map__pin';
   var pinsPlacementSelector = '.map__pins';
@@ -246,12 +244,6 @@
     renderPins(pinsPlacementSelector, pinsData, pinFragment);
   };
 
-  var onErrorHandler = function () {
-    var error = getTemplateFragment(errorTemplateSelector, errorFragmentSelector).cloneNode(true);
-    var fragment = document.createDocumentFragment();
-    main.appendChild(fragment.appendChild(error));
-  };
-
   // Global functions
   window.rendering = {
     reRenderPins: function () {
@@ -273,5 +265,5 @@
   };
 
   // Runtime
-  window.xhr.load(onSuccessHandler, onErrorHandler);
+  window.xhr.load(onSuccessHandler, window.xhr.onErrorHandler);
 })();

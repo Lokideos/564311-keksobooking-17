@@ -2,6 +2,8 @@
 
 (function () {
   // Initialize
+  var ESC_KEYCODE = 27;
+  var initialFormState = {};
   var CAPACITY_FOR_ROOM_MATCHER = {
     '1 комната': ['для 1 гостя'],
     '2 комнаты': ['для 2 гостей', 'для 1 гостя'],
@@ -25,6 +27,16 @@
   var FORMS = [adForm, mapFiltersForm];
   var roomNumbers = adForm.querySelector('select[name="rooms"');
   var capacity = adForm.querySelector('select[name="capacity"');
+  var avatar = adForm.querySelector('.ad-form-header__preview img');
+  var title = adForm.querySelector('input[name="title"]');
+  var address = adForm.querySelector('input[name="address"]');
+  var description = adForm.querySelector('textarea[name="description"]');
+  var features = adForm.querySelectorAll('input[name=features]');
+  var main = document.querySelector('main');
+
+  // Selectors
+  var successMessageTemplateSelector = '#success';
+  var successMessageFragmentSelector = '.success';
 
   // Initial data
   var PRICE_BY_TYPE = {
@@ -34,6 +46,7 @@
     'palace': '10000'
   };
   var SELECTORS_TO_TOGGLE = ['select', 'fieldset'];
+  var MAIN_PIN_INITIAL_STYLE = 'left: 570px; top: 375px';
   var TOP_MAIN_PIN_COORDINATES = mainPin.offsetTop + Math.floor(mainPin.offsetHeight / 2);
   var LEFT_MAIN_PIN_COORDINATES = mainPin.offsetLeft + Math.floor(mainPin.offsetWidth / 2);
   var MAIN_PIN_LENGTH = 22;
@@ -43,6 +56,12 @@
   var FADING_AD_FORM_CLASS = 'ad-form--disabled';
 
   // Support
+  var getTemplateFragment = function (templateId, templateFragment) {
+    return document.querySelector(templateId)
+      .content
+      .querySelector(templateFragment);
+  };
+
   var calculateInitialMainPinCoordinates = function () {
     return LEFT_MAIN_PIN_COORDINATES + ', ' + TOP_MAIN_PIN_COORDINATES;
   };
@@ -65,6 +84,51 @@
 
   var getYCoordinates = function (pin) {
     return pin.offsetTop + pin.offsetHeight + MAIN_PIN_LENGTH;
+  };
+
+  var captureInitialState = function () {
+    initialFormState = {
+      avatarLink: avatar.src,
+      titleText: title.value,
+      addressText: calculateInitialMainPinCoordinates(),
+      houseTypeIndex: appartmentType.selectedIndex,
+      priceText: minPrice.value,
+      pricePlaceholder: minPrice.placeholder,
+      roomsIndex: roomNumbers.selectedIndex,
+      capacityIndex: capacity.selectedIndex,
+      timeInIndex: timeIn.selectedIndex,
+      timeOutIndex: timeOut.selectedIndex,
+      descriptionText: description.value
+    };
+  };
+
+  var resetAdForm = function () {
+    avatar.src = initialFormState.avatarLink;
+    title.value = initialFormState.titleText;
+    description.value = initialFormState.descriptionText;
+    address.value = initialFormState.addressText;
+    minPrice.value = initialFormState.priceText;
+    minPrice.placeholder = initialFormState.pricePlaceholder;
+    appartmentType.selectedIndex = initialFormState.houseTypeIndex;
+    timeIn.selectedIndex = initialFormState.timeInIndex;
+    timeOut.selectedIndex = initialFormState.timeOutIndex;
+    roomNumbers.selectedIndex = initialFormState.roomsIndex;
+    capacity.selectedIndex = initialFormState.capacityIndex;
+    features.forEach(function (feature) {
+      feature.checked = false;
+    });
+    mainPin.style = MAIN_PIN_INITIAL_STYLE;
+  };
+
+  // DOM manipulation
+  var renderSuccessMessage = function () {
+    var fragment = document.createDocumentFragment();
+    var successMessage = getTemplateFragment(successMessageTemplateSelector, successMessageFragmentSelector).cloneNode(true);
+    fragment.appendChild(successMessage);
+
+    main.appendChild(fragment);
+    document.addEventListener('click', onDocumentClick);
+    document.addEventListener('keydown', onKeyPressed);
   };
 
   // Event handler functions
@@ -97,6 +161,30 @@
     activateAdForm(adForm);
 
     mainPin.removeEventListener('mousedown', onMainPinMousedown);
+  };
+
+  var onDocumentClick = function () {
+    main.querySelector('.success').remove();
+    document.removeEventListener('click', onDocumentClick);
+    document.removeEventListener('keydown', onKeyPressed);
+  };
+
+  var onKeyPressed = function (evt) {
+    if (evt.keyCode === ESC_KEYCODE) {
+      main.querySelector('.success').remove();
+      document.removeEventListener('click', onDocumentClick);
+      document.removeEventListener('keydown', onKeyPressed);
+    }
+  };
+
+  var onSuccessHandler = function () {
+    resetAdForm();
+    renderSuccessMessage();
+  };
+
+  var onAdFormSubmit = function (evt) {
+    evt.preventDefault();
+    window.xhr.save(new FormData(adForm), onSuccessHandler, window.xhr.onErrorHandler);
   };
 
   // DOM manipulation
@@ -149,6 +237,7 @@
   // Runtime
   disableForms([mapFiltersForm, adForm]);
   fillAddressElement(adForm, 'input[name="address"]', calculateInitialMainPinCoordinates());
+  captureInitialState(initialFormState);
   validateCapacityPerRoomCount(roomNumbers[roomNumbers.selectedIndex], capacity[capacity.selectedIndex]);
 
   var applyEventHandlers = function () {
@@ -159,6 +248,7 @@
     roomNumbers.addEventListener('change', onRoomsOrCapacityChange);
     capacity.addEventListener('change', onRoomsOrCapacityChange);
     mainPin.addEventListener('mousedown', onMainPinMousedown);
+    adForm.addEventListener('submit', onAdFormSubmit);
   };
 
   applyEventHandlers();
