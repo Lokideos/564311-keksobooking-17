@@ -217,7 +217,8 @@
 
   var renderCard = function (card) {
     card.querySelector('.popup__close').addEventListener('click', function () {
-      map.querySelector('.map__card').remove();
+      // eslint-disable-next-line no-invalid-this
+      this.closest('.map__card').remove();
     });
 
     document.addEventListener('keydown', onSetupEscPress);
