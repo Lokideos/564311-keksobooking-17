@@ -231,7 +231,7 @@
   window.rendering = {
     reRenderPins: function () {
       var adsToRender = getAdsOfType(sortAds(advertisments));
-      var oldPinsArray = document.querySelector('.map__pins').querySelectorAll('.map__pin');
+      var oldPinsArray = document.querySelectorAll('.map__pins .map__pin');
 
       oldPinsArray.forEach(function (pin) {
         if (!pin.classList.contains('map__pin--main')) {
