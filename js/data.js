@@ -80,6 +80,7 @@
     var housingType = APPARTMENT_TYPES[window.data.getHousingType()];
     var priceFilterIndex = window.data.getPrice();
     var roomsQuantity = window.data.getRooms();
+    var guestsQuantity = window.data.getGuests();
 
     ads = ads.filter(function (ad) {
       switch (priceFilterIndex) {
@@ -113,11 +114,20 @@
       }
       return null;
     });
-    return ads.filter(function (ad) {
-      if (roomsQuantity === 0) {
+    ads = ads.filter(function (ad) {
+      if (roomsQuantity === 'any') {
         return ad;
       }
       if (roomsQuantity === ad.offer.rooms) {
+        return ad;
+      }
+      return null;
+    });
+    return ads.filter(function (ad) {
+      if (guestsQuantity === 'any') {
+        return ad;
+      }
+      if (roomsQuantity === ad.offer.guests) {
         return ad;
       }
       return null;

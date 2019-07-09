@@ -10,10 +10,17 @@
   };
 
   var roomsQuantity = {
-    'Любое число комнат': 0,
+    'Любое число комнат': 'any',
     'Одна комната': 1,
     'Две комнаты': 2,
     'Три комнаты': 3
+  };
+
+  var guestsQuantity = {
+    'Любое число гостей': 'any',
+    'Два гостя': 2,
+    'Один гость': 1,
+    'Не для гостей': 'not_for_guests'
   };
 
   // Selected DOM elements
@@ -21,6 +28,7 @@
   var housingFilter = mapFiltersForm.querySelector('select[name=housing-type]');
   var priceFilter = mapFiltersForm.querySelector('select[name=housing-price]');
   var roomsFilter = mapFiltersForm.querySelector('select[name=housing-rooms]');
+  var guestsFilter = mapFiltersForm.querySelector('select[name=housing-guests]');
 
   // Global functions
   window.data = {
@@ -32,6 +40,9 @@
     },
     getRooms: function () {
       return roomsQuantity[roomsFilter[roomsFilter.selectedIndex].innerText];
+    },
+    getGuests: function () {
+      return guestsQuantity[guestsFilter[guestsFilter.selectedIndex].innerText];
     }
   };
 
@@ -45,6 +56,7 @@
     housingFilter.addEventListener('change', onFilterFormChange);
     priceFilter.addEventListener('change', onFilterFormChange);
     roomsFilter.addEventListener('change', onFilterFormChange);
+    guestsFilter.addEventListener('change', onFilterFormChange);
   };
 
   applyEventHandlers();
