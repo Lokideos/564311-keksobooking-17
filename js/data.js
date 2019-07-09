@@ -76,11 +76,34 @@
     });
   };
 
+  var isSubset = function (set, subset) {
+    if (set.length === 0) {
+      return true;
+    }
+
+    if (subset.length === 0) {
+      return false;
+    }
+
+    set = set.map(function (element) {
+      if (subset.includes(element)) {
+        return true;
+      }
+
+      return false;
+    });
+
+    return set.reduce(function (previousValue, currentValue) {
+      return previousValue && currentValue;
+    });
+  };
+
   var getAdsOfType = function (ads) {
     var housingType = APPARTMENT_TYPES[window.data.getHousingType()];
     var priceFilterIndex = window.data.getPrice();
     var roomsQuantity = window.data.getRooms();
     var guestsQuantity = window.data.getGuests();
+    var features = window.data.getFeatures();
 
     ads = ads.filter(function (ad) {
       switch (priceFilterIndex) {
@@ -123,13 +146,20 @@
       }
       return null;
     });
-    return ads.filter(function (ad) {
+    ads = ads.filter(function (ad) {
       if (guestsQuantity === 'any') {
         return ad;
       }
       if (roomsQuantity === ad.offer.guests) {
         return ad;
       }
+      return null;
+    });
+    return ads.filter(function (ad) {
+      if (isSubset(features, ad.offer.features)) {
+        return ad;
+      }
+
       return null;
     });
   };
@@ -272,7 +302,6 @@
 
   var onSuccessHandler = function (data) {
     advertisments = generateAdsArray(data);
-    console.log(advertisments);
     renderPins(advertisments.slice(0, MAX_RENDERED_PINS), pinsPlacementSelector);
   };
 
