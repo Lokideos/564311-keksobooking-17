@@ -87,11 +87,8 @@
   };
 
   // Data generation
-  var generateAd = function (ad, index) {
+  var generateAd = function (ad) {
     return {
-      'meta': {
-        'id': index
-      },
       'author': {
         'avatar': ad.author.avatar
       },
@@ -116,15 +113,14 @@
   };
 
   var generateAdsArray = function (adsData) {
-    return adsData.map(function (ad, index) {
-      return generateAd(ad, index);
+    return adsData.map(function (ad) {
+      return generateAd(ad);
     });
   };
 
   var generatePin = function (ad) {
     var pin = getTemplateFragment(pinTemplateSelector, pinFragmentSelector).cloneNode(true);
     pin.style = 'left: ' + adjustXLocation(ad.location.x) + 'px; top: ' + adjustYLocation(ad.location.y) + 'px;';
-    pin.dataset.adId = ad.meta.id;
     var pinImage = pin.querySelector('img');
     pinImage.src = ad.author.avatar;
     pinImage.alt = ad.offer.type;
@@ -132,16 +128,12 @@
     return pin;
   };
 
-  var generatePinsArray = function (ads) {
-    return ads.map(function (ad) {
-      return generatePin(ad);
-    });
-  };
-
-  var renderPins = function (pinsPlacement, pinsData, fragment) {
+  var renderPins = function (ads, pinsPlacement) {
+    var pinFragment = document.createDocumentFragment();
     var canvas = document.querySelector(pinsPlacement);
-    pinsData.forEach(function (pin) {
-      fragment.appendChild(pin);
+    ads.forEach(function (ad) {
+      var pin = generatePin(ad);
+      pinFragment.appendChild(pin);
 
       pin.addEventListener('click', function () {
         var currentAd = map.querySelector('.map__card');
@@ -149,15 +141,14 @@
           currentAd.remove();
         }
 
-        renderCard(generateCard(pin.dataset.adId));
+        renderCard(generateCard(ad));
       });
-
     });
 
-    canvas.appendChild(fragment);
+    canvas.appendChild(pinFragment);
   };
 
-  var generateCard = function (adId) {
+  var generateCard = function (ad) {
     var card = getTemplateFragment(cardTemplateSelector, cardFragmentSelector).cloneNode(true);
     var cardTitle = card.querySelector('.popup__title');
     var cardAddress = card.querySelector('.popup__text--address');
@@ -170,10 +161,6 @@
     var cardPictures = card.querySelector('.popup__photos');
     var cardPictureTemplate = cardPictures.querySelector('.popup__photo');
     var cardAvatar = card.querySelector('.popup__avatar');
-
-    var ad = advertisments.filter(function (advertisment) {
-      return advertisment['meta']['id'] === parseInt(adId, 10);
-    })[0];
 
     cardTitle.innerText = ad.offer.title;
     cardAddress.innerText = ad.offer.address;
@@ -237,18 +224,13 @@
 
   var onSuccessHandler = function (data) {
     advertisments = generateAdsArray(data);
-    var pinsData = generatePinsArray(advertisments.slice(0, MAX_RENDERED_PINS));
-    var pinFragment = document.createDocumentFragment();
-    renderPins(pinsPlacementSelector, pinsData, pinFragment);
+    renderPins(advertisments.slice(0, MAX_RENDERED_PINS), pinsPlacementSelector);
   };
 
   // Global functions
   window.rendering = {
     reRenderPins: function () {
       var adsToRender = getAdsOfType(sortAds(advertisments));
-
-      var pinsData = generatePinsArray(adsToRender.slice(0, getPinsQuantity(adsToRender.length)));
-      var fragment = document.createDocumentFragment();
       var oldPinsArray = document.querySelector('.map__pins').querySelectorAll('.map__pin');
 
       oldPinsArray.forEach(function (pin) {
@@ -257,7 +239,7 @@
         }
       });
 
-      renderPins(pinsPlacementSelector, pinsData, fragment);
+      renderPins(adsToRender.slice(0, getPinsQuantity(adsToRender.length)), pinsPlacementSelector);
     }
   };
 
