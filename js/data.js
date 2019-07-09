@@ -307,7 +307,7 @@
 
   // Global functions
   window.rendering = {
-    reRenderPins: function () {
+    reRenderPins: window.debounce(function () {
       var adsToRender = getAdsOfType(sortAds(advertisments));
       var oldPinsArray = document.querySelectorAll('.map__pins .map__pin');
 
@@ -318,7 +318,7 @@
       });
 
       renderPins(adsToRender.slice(0, getPinsQuantity(adsToRender.length)), pinsPlacementSelector);
-    }
+    })
   };
 
   // Runtime
