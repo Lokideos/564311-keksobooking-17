@@ -79,6 +79,7 @@
   var getAdsOfType = function (ads) {
     var housingType = APPARTMENT_TYPES[window.data.getHousingType()];
     var priceFilterIndex = window.data.getPrice();
+    var roomsQuantity = window.data.getRooms();
 
     ads = ads.filter(function (ad) {
       switch (priceFilterIndex) {
@@ -103,11 +104,20 @@
 
       return null;
     });
-    return ads.filter(function (ad) {
+    ads = ads.filter(function (ad) {
       if (!housingType) {
         return ad;
       }
       if (ad.offer.type === housingType) {
+        return ad;
+      }
+      return null;
+    });
+    return ads.filter(function (ad) {
+      if (roomsQuantity === 0) {
+        return ad;
+      }
+      if (roomsQuantity === ad.offer.rooms) {
         return ad;
       }
       return null;
