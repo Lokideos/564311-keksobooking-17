@@ -78,6 +78,31 @@
 
   var getAdsOfType = function (ads) {
     var housingType = APPARTMENT_TYPES[window.data.getHousingType()];
+    var priceFilterIndex = window.data.getPrice();
+
+    ads = ads.filter(function (ad) {
+      switch (priceFilterIndex) {
+        case 1:
+          if (ad.offer.price >= 10000 && ad.offer.price < 50000) {
+            return ad;
+          }
+          break;
+        case 2:
+          if (ad.offer.price < 10000) {
+            return ad;
+          }
+          break;
+        case 3:
+          if (ad.offer.price > 50000) {
+            return ad;
+          }
+          break;
+        default:
+          return null;
+      }
+
+      return null;
+    });
     return ads.filter(function (ad) {
       if (ad.offer.type === housingType) {
         return ad;
@@ -224,6 +249,7 @@
 
   var onSuccessHandler = function (data) {
     advertisments = generateAdsArray(data);
+    console.log(advertisments);
     renderPins(advertisments.slice(0, MAX_RENDERED_PINS), pinsPlacementSelector);
   };
 
