@@ -4,7 +4,6 @@
   // Initialize
   var ESC_KEYCODE = 27;
   var advertisments = [];
-  var cardsData = [];
   var MAX_RENDERED_PINS = 5;
   var CORRECT_FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
   var APPARTMENT_TYPES = {
@@ -88,8 +87,11 @@
   };
 
   // Data generation
-  var generateAd = function (ad) {
+  var generateAd = function (ad, index) {
     return {
+      'meta': {
+        'id': index
+      },
       'author': {
         'avatar': ad.author.avatar
       },
@@ -114,15 +116,15 @@
   };
 
   var generateAdsArray = function (adsData) {
-    return adsData.map(function (ad) {
-      return generateAd(ad);
+    return adsData.map(function (ad, index) {
+      return generateAd(ad, index);
     });
   };
 
-  var generatePin = function (ad, index) {
+  var generatePin = function (ad) {
     var pin = getTemplateFragment(pinTemplateSelector, pinFragmentSelector).cloneNode(true);
     pin.style = 'left: ' + adjustXLocation(ad.location.x) + 'px; top: ' + adjustYLocation(ad.location.y) + 'px;';
-    pin.dataset.adId = index;
+    pin.dataset.adId = ad.meta.id;
     var pinImage = pin.querySelector('img');
     pinImage.src = ad.author.avatar;
     pinImage.alt = ad.offer.type;
@@ -131,8 +133,8 @@
   };
 
   var generatePinsArray = function (ads) {
-    return ads.map(function (ad, index) {
-      return generatePin(ad, index);
+    return ads.map(function (ad) {
+      return generatePin(ad);
     });
   };
 
@@ -147,7 +149,7 @@
           currentAd.remove();
         }
 
-        renderCard(cardsData[pin.dataset.adId]);
+        renderCard(generateCard(pin.dataset.adId));
       });
 
     });
@@ -155,13 +157,7 @@
     canvas.appendChild(fragment);
   };
 
-  var generateCardsArray = function (adsData) {
-    return adsData.map(function (ad) {
-      return generateCard(ad);
-    });
-  };
-
-  var generateCard = function (ad) {
+  var generateCard = function (adId) {
     var card = getTemplateFragment(cardTemplateSelector, cardFragmentSelector).cloneNode(true);
     var cardTitle = card.querySelector('.popup__title');
     var cardAddress = card.querySelector('.popup__text--address');
@@ -174,6 +170,10 @@
     var cardPictures = card.querySelector('.popup__photos');
     var cardPictureTemplate = cardPictures.querySelector('.popup__photo');
     var cardAvatar = card.querySelector('.popup__avatar');
+
+    var ad = advertisments.filter(function (advertisment) {
+      return advertisment['meta']['id'] === parseInt(adId, 10);
+    })[0];
 
     cardTitle.innerText = ad.offer.title;
     cardAddress.innerText = ad.offer.address;
@@ -237,7 +237,6 @@
 
   var onSuccessHandler = function (data) {
     advertisments = generateAdsArray(data);
-    cardsData = generateCardsArray(advertisments);
     var pinsData = generatePinsArray(advertisments.slice(0, MAX_RENDERED_PINS));
     var pinFragment = document.createDocumentFragment();
     renderPins(pinsPlacementSelector, pinsData, pinFragment);
@@ -247,7 +246,6 @@
   window.rendering = {
     reRenderPins: function () {
       var adsToRender = getAdsOfType(sortAds(advertisments));
-      cardsData = generateCardsArray(adsToRender);
 
       var pinsData = generatePinsArray(adsToRender.slice(0, getPinsQuantity(adsToRender.length)));
       var fragment = document.createDocumentFragment();
