@@ -93,17 +93,20 @@
           }
           break;
         case 3:
-          if (ad.offer.price > 50000) {
+          if (ad.offer.price >= 50000) {
             return ad;
           }
           break;
         default:
-          return null;
+          return ad;
       }
 
       return null;
     });
     return ads.filter(function (ad) {
+      if (!housingType) {
+        return ad;
+      }
       if (ad.offer.type === housingType) {
         return ad;
       }
