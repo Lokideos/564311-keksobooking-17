@@ -119,7 +119,7 @@
       if (roomsQuantity === 'any') {
         return ad;
       }
-      if (roomsQuantity === ad.offer.rooms) {
+      if (ad.offer.rooms === roomsQuantity) {
         return ad;
       }
       return null;
@@ -128,7 +128,7 @@
       if (guestsQuantity === 'any') {
         return ad;
       }
-      if (roomsQuantity === ad.offer.guests) {
+      if (guestsQuantity === ad.offer.guests) {
         return ad;
       }
       return null;
