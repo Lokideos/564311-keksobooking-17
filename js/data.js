@@ -76,28 +76,6 @@
     });
   };
 
-  var isSubset = function (set, subset) {
-    if (set.length === 0) {
-      return true;
-    }
-
-    if (subset.length === 0) {
-      return false;
-    }
-
-    set = set.map(function (element) {
-      if (subset.includes(element)) {
-        return true;
-      }
-
-      return false;
-    });
-
-    return set.reduce(function (previousValue, currentValue) {
-      return previousValue && currentValue;
-    });
-  };
-
   var getAdsOfType = function (ads) {
     var housingType = APPARTMENT_TYPES[window.data.getHousingType()];
     var priceFilterIndex = window.data.getPrice();
@@ -156,7 +134,9 @@
       return null;
     });
     return ads.filter(function (ad) {
-      if (isSubset(features, ad.offer.features)) {
+      if (features.every(function (feature) {
+        return ad.offer.features.includes(feature);
+      })) {
         return ad;
       }
 

@@ -48,7 +48,7 @@
     },
     getFeatures: function () {
       return Array.from(featuresFilter).filter(function (feature) {
-        if (feature.checked === true) {
+        if (feature.checked) {
           return feature;
         }
 
