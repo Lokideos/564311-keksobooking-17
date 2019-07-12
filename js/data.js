@@ -262,8 +262,7 @@
 
   var renderCard = function (card) {
     card.querySelector('.popup__close').addEventListener('click', function () {
-      // eslint-disable-next-line no-invalid-this
-      this.closest('.map__card').remove();
+      map.closest('.map__card').remove();
     });
 
     document.addEventListener('keydown', onSetupEscPress);
