@@ -78,10 +78,68 @@
 
   var getAdsOfType = function (ads) {
     var housingType = APPARTMENT_TYPES[window.data.getHousingType()];
-    return ads.filter(function (ad) {
+    var priceFilterIndex = window.data.getPrice();
+    var roomsQuantity = window.data.getRooms();
+    var guestsQuantity = window.data.getGuests();
+    var features = window.data.getFeatures();
+
+    ads = ads.filter(function (ad) {
+      switch (priceFilterIndex) {
+        case 1:
+          if (ad.offer.price >= 10000 && ad.offer.price < 50000) {
+            return ad;
+          }
+          break;
+        case 2:
+          if (ad.offer.price < 10000) {
+            return ad;
+          }
+          break;
+        case 3:
+          if (ad.offer.price >= 50000) {
+            return ad;
+          }
+          break;
+        default:
+          return ad;
+      }
+
+      return null;
+    });
+    ads = ads.filter(function (ad) {
+      if (!housingType) {
+        return ad;
+      }
       if (ad.offer.type === housingType) {
         return ad;
       }
+      return null;
+    });
+    ads = ads.filter(function (ad) {
+      if (roomsQuantity === 'any') {
+        return ad;
+      }
+      if (ad.offer.rooms === roomsQuantity) {
+        return ad;
+      }
+      return null;
+    });
+    ads = ads.filter(function (ad) {
+      if (guestsQuantity === 'any') {
+        return ad;
+      }
+      if (guestsQuantity === ad.offer.guests) {
+        return ad;
+      }
+      return null;
+    });
+    return ads.filter(function (ad) {
+      if (features.every(function (feature) {
+        return ad.offer.features.includes(feature);
+      })) {
+        return ad;
+      }
+
       return null;
     });
   };
@@ -229,7 +287,7 @@
 
   // Global functions
   window.rendering = {
-    reRenderPins: function () {
+    reRenderPins: window.debounce(function () {
       var adsToRender = getAdsOfType(sortAds(advertisments));
       var oldPinsArray = document.querySelectorAll('.map__pins .map__pin');
 
@@ -240,7 +298,7 @@
       });
 
       renderPins(adsToRender.slice(0, getPinsQuantity(adsToRender.length)), pinsPlacementSelector);
-    }
+    })
   };
 
   // Runtime
