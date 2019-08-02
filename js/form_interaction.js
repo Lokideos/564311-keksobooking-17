@@ -33,6 +33,7 @@
   var description = adForm.querySelector('textarea[name="description"]');
   var features = adForm.querySelectorAll('input[name=features]');
   var main = document.querySelector('main');
+  var resetButton = adForm.querySelector('.ad-form__reset');
 
   // Selectors
   var successMessageTemplateSelector = '#success';
@@ -157,8 +158,8 @@
 
   var onMainPinMousedown = function () {
     enableForms(FORMS);
-    disableMapFade(map);
-    activateAdForm(adForm);
+    toggleMapFadeEffect(map);
+    toggleAdFormFadeEffect(adForm);
     window.xhr.load(window.dataLoad.onSuccessHandler, window.xhr.onErrorHandler);
 
     mainPin.removeEventListener('mousedown', onMainPinMousedown);
@@ -188,13 +189,26 @@
     window.xhr.save(new FormData(adForm), onSuccessHandler, window.xhr.onErrorHandler);
   };
 
-  // DOM manipulation
-  var disableMapFade = function (fadedMap) {
-    fadedMap.classList.remove(FADING_MAP_FORM_CLASS);
+  var addDisableEffects = function () {
+    toggleMapFadeEffect(map);
+    toggleAdFormFadeEffect(adForm);
   };
 
-  var activateAdForm = function (fadedForm) {
-    fadedForm.classList.remove(FADING_AD_FORM_CLASS);
+  var onResetButtonClick = function (evt) {
+    evt.preventDefault();
+    resetAdForm();
+    disableForms([mapFiltersForm, adForm]);
+    addDisableEffects();
+    mainPin.addEventListener('mousedown', onMainPinMousedown);
+  };
+
+  // DOM manipulation
+  var toggleMapFadeEffect = function (selectedElement) {
+    selectedElement.classList.toggle(FADING_MAP_FORM_CLASS);
+  };
+
+  var toggleAdFormFadeEffect = function (selectedForm) {
+    selectedForm.classList.toggle(FADING_AD_FORM_CLASS);
   };
 
   var enableForms = function (forms) {
@@ -250,6 +264,7 @@
     capacity.addEventListener('change', onRoomsOrCapacityChange);
     mainPin.addEventListener('mousedown', onMainPinMousedown);
     adForm.addEventListener('submit', onAdFormSubmit);
+    resetButton.addEventListener('click', onResetButtonClick);
   };
 
   applyEventHandlers();
