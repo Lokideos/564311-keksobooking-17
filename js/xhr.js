@@ -32,9 +32,11 @@
   };
 
   var onDocumentClick = function () {
-    main.querySelector('.error').remove();
-    document.removeEventListener('keydown', onEscKeyPressed);
-    document.removeEventListener('click', onDocumentClick);
+    if (main.querySelector('.error')) {
+      main.querySelector('.error').remove();
+      document.removeEventListener('keydown', onEscKeyPressed);
+      document.removeEventListener('click', onDocumentClick);
+    }
   };
 
   window.xhr = {

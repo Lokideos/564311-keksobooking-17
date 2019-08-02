@@ -33,6 +33,12 @@
   var description = adForm.querySelector('textarea[name="description"]');
   var features = adForm.querySelectorAll('input[name=features]');
   var main = document.querySelector('main');
+  var resetButton = adForm.querySelector('.ad-form__reset');
+  var houseTypeFilter = mapFiltersForm.querySelector('select[name="housing-type"]');
+  var housePriceFilter = mapFiltersForm.querySelector('select[name="housing-price"]');
+  var houseRoomsFilter = mapFiltersForm.querySelector('select[name="housing-rooms"]');
+  var houseGuestsFilter = mapFiltersForm.querySelector('select[name="housing-guests"]');
+  var featuresFilter = mapFiltersForm.querySelectorAll('input[name=features]');
 
   // Selectors
   var successMessageTemplateSelector = '#success';
@@ -98,7 +104,11 @@
       capacityIndex: capacity.selectedIndex,
       timeInIndex: timeIn.selectedIndex,
       timeOutIndex: timeOut.selectedIndex,
-      descriptionText: description.value
+      descriptionText: description.value,
+      houseTypeFilterIndex: houseTypeFilter.selectedIndex,
+      housePriceFilterIndex: housePriceFilter.selectedIndex,
+      houseRoomsFilterIndex: houseRoomsFilter.selectedIndex,
+      houseGuestsFilterIndex: houseGuestsFilter.selectedIndex
     };
   };
 
@@ -114,10 +124,20 @@
     timeOut.selectedIndex = initialFormState.timeOutIndex;
     roomNumbers.selectedIndex = initialFormState.roomsIndex;
     capacity.selectedIndex = initialFormState.capacityIndex;
+    houseTypeFilter.selectedIndex = initialFormState.houseTypeFilterIndex;
+    housePriceFilter.selectedIndex = initialFormState.housePriceFilterIndex;
+    houseRoomsFilter.selectedIndex = initialFormState.houseRoomsFilterIndex;
+    houseGuestsFilter.selectedIndex = initialFormState.houseGuestsFilterIndex;
+
     features.forEach(function (feature) {
       feature.checked = false;
     });
+
+    featuresFilter.forEach(function (feature) {
+      feature.checked = false;
+    });
     mainPin.style = MAIN_PIN_INITIAL_STYLE;
+    window.rendering.removePins();
   };
 
   // DOM manipulation
@@ -151,14 +171,15 @@
     validateCapacityPerRoomCount(selectedRoomNumbers, selectedCapacity);
   };
 
-  var onMainPinMouseup = function () {
+  var onMainPinMouseMove = function () {
     fillAddressElement(adForm, 'input[name="address"]', calculateMainPinCoordinates());
   };
 
   var onMainPinMousedown = function () {
     enableForms(FORMS);
-    disableMapFade(map);
-    activateAdForm(adForm);
+    toggleMapFadeEffect(map);
+    toggleAdFormFadeEffect(adForm);
+    window.xhr.load(window.dataLoad.onSuccessHandler, window.xhr.onErrorHandler);
 
     mainPin.removeEventListener('mousedown', onMainPinMousedown);
   };
@@ -187,13 +208,26 @@
     window.xhr.save(new FormData(adForm), onSuccessHandler, window.xhr.onErrorHandler);
   };
 
-  // DOM manipulation
-  var disableMapFade = function (fadedMap) {
-    fadedMap.classList.remove(FADING_MAP_FORM_CLASS);
+  var addDisableEffects = function () {
+    toggleMapFadeEffect(map);
+    toggleAdFormFadeEffect(adForm);
   };
 
-  var activateAdForm = function (fadedForm) {
-    fadedForm.classList.remove(FADING_AD_FORM_CLASS);
+  var onResetButtonClick = function (evt) {
+    evt.preventDefault();
+    resetAdForm();
+    disableForms([mapFiltersForm, adForm]);
+    addDisableEffects();
+    mainPin.addEventListener('mousedown', onMainPinMousedown);
+  };
+
+  // DOM manipulation
+  var toggleMapFadeEffect = function (selectedElement) {
+    selectedElement.classList.toggle(FADING_MAP_FORM_CLASS);
+  };
+
+  var toggleAdFormFadeEffect = function (selectedForm) {
+    selectedForm.classList.toggle(FADING_AD_FORM_CLASS);
   };
 
   var enableForms = function (forms) {
@@ -241,7 +275,7 @@
   validateCapacityPerRoomCount(roomNumbers[roomNumbers.selectedIndex], capacity[capacity.selectedIndex]);
 
   var applyEventHandlers = function () {
-    mainPin.addEventListener('mouseup', onMainPinMouseup);
+    mainPin.addEventListener('mousemove', onMainPinMouseMove);
     appartmentType.addEventListener('change', onAppartmentTypeChange);
     timeIn.addEventListener('change', onTimeInChange);
     timeOut.addEventListener('change', onTimeOutChange);
@@ -249,6 +283,7 @@
     capacity.addEventListener('change', onRoomsOrCapacityChange);
     mainPin.addEventListener('mousedown', onMainPinMousedown);
     adForm.addEventListener('submit', onAdFormSubmit);
+    resetButton.addEventListener('click', onResetButtonClick);
   };
 
   applyEventHandlers();

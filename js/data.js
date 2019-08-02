@@ -262,7 +262,7 @@
 
   var renderCard = function (card) {
     card.querySelector('.popup__close').addEventListener('click', function () {
-      map.closest('.map__card').remove();
+      map.querySelector('.map__card').remove();
     });
 
     document.addEventListener('keydown', onSetupEscPress);
@@ -279,15 +279,15 @@
     }
   };
 
-  var onSuccessHandler = function (data) {
-    advertisments = generateAdsArray(data);
-    renderPins(advertisments.slice(0, MAX_RENDERED_PINS), pinsPlacementSelector);
-  };
-
   // Global functions
   window.rendering = {
     reRenderPins: window.debounce(function () {
       var adsToRender = getAdsOfType(sortAds(advertisments));
+      window.rendering.removePins();
+
+      renderPins(adsToRender.slice(0, getPinsQuantity(adsToRender.length)), pinsPlacementSelector);
+    }),
+    removePins: function () {
       var oldPinsArray = document.querySelectorAll('.map__pins .map__pin');
 
       oldPinsArray.forEach(function (pin) {
@@ -295,11 +295,13 @@
           pin.remove();
         }
       });
-
-      renderPins(adsToRender.slice(0, getPinsQuantity(adsToRender.length)), pinsPlacementSelector);
-    })
+    }
   };
 
-  // Runtime
-  window.xhr.load(onSuccessHandler, window.xhr.onErrorHandler);
+  window.dataLoad = {
+    onSuccessHandler: function (data) {
+      advertisments = generateAdsArray(data);
+      renderPins(advertisments.slice(0, MAX_RENDERED_PINS), pinsPlacementSelector);
+    }
+  };
 })();
