@@ -283,6 +283,11 @@
   window.rendering = {
     reRenderPins: window.debounce(function () {
       var adsToRender = getAdsOfType(sortAds(advertisments));
+      window.rendering.removePins();
+
+      renderPins(adsToRender.slice(0, getPinsQuantity(adsToRender.length)), pinsPlacementSelector);
+    }),
+    removePins: function () {
       var oldPinsArray = document.querySelectorAll('.map__pins .map__pin');
 
       oldPinsArray.forEach(function (pin) {
@@ -290,9 +295,7 @@
           pin.remove();
         }
       });
-
-      renderPins(adsToRender.slice(0, getPinsQuantity(adsToRender.length)), pinsPlacementSelector);
-    })
+    }
   };
 
   window.dataLoad = {

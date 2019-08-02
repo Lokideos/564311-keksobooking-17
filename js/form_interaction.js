@@ -34,6 +34,11 @@
   var features = adForm.querySelectorAll('input[name=features]');
   var main = document.querySelector('main');
   var resetButton = adForm.querySelector('.ad-form__reset');
+  var houseTypeFilter = mapFiltersForm.querySelector('select[name="housing-type"]');
+  var housePriceFilter = mapFiltersForm.querySelector('select[name="housing-price"]');
+  var houseRoomsFilter = mapFiltersForm.querySelector('select[name="housing-rooms"]');
+  var houseGuestsFilter = mapFiltersForm.querySelector('select[name="housing-guests"]');
+  var featuresFilter = mapFiltersForm.querySelectorAll('input[name=features]');
 
   // Selectors
   var successMessageTemplateSelector = '#success';
@@ -99,7 +104,11 @@
       capacityIndex: capacity.selectedIndex,
       timeInIndex: timeIn.selectedIndex,
       timeOutIndex: timeOut.selectedIndex,
-      descriptionText: description.value
+      descriptionText: description.value,
+      houseTypeFilterIndex: houseTypeFilter.selectedIndex,
+      housePriceFilterIndex: housePriceFilter.selectedIndex,
+      houseRoomsFilterIndex: houseRoomsFilter.selectedIndex,
+      houseGuestsFilterIndex: houseGuestsFilter.selectedIndex
     };
   };
 
@@ -115,10 +124,20 @@
     timeOut.selectedIndex = initialFormState.timeOutIndex;
     roomNumbers.selectedIndex = initialFormState.roomsIndex;
     capacity.selectedIndex = initialFormState.capacityIndex;
+    houseTypeFilter.selectedIndex = initialFormState.houseTypeFilterIndex;
+    housePriceFilter.selectedIndex = initialFormState.housePriceFilterIndex;
+    houseRoomsFilter.selectedIndex = initialFormState.houseRoomsFilterIndex;
+    houseGuestsFilter.selectedIndex = initialFormState.houseGuestsFilterIndex;
+
     features.forEach(function (feature) {
       feature.checked = false;
     });
+
+    featuresFilter.forEach(function (feature) {
+      feature.checked = false;
+    });
     mainPin.style = MAIN_PIN_INITIAL_STYLE;
+    window.rendering.removePins();
   };
 
   // DOM manipulation
