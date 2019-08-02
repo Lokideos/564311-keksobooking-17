@@ -262,7 +262,7 @@
 
   var renderCard = function (card) {
     card.querySelector('.popup__close').addEventListener('click', function () {
-      map.closest('.map__card').remove();
+      map.querySelector('.map__card').remove();
     });
 
     document.addEventListener('keydown', onSetupEscPress);
