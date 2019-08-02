@@ -159,6 +159,7 @@
     enableForms(FORMS);
     disableMapFade(map);
     activateAdForm(adForm);
+    window.xhr.load(window.dataLoad.onSuccessHandler, window.xhr.onErrorHandler);
 
     mainPin.removeEventListener('mousedown', onMainPinMousedown);
   };

@@ -279,11 +279,6 @@
     }
   };
 
-  var onSuccessHandler = function (data) {
-    advertisments = generateAdsArray(data);
-    renderPins(advertisments.slice(0, MAX_RENDERED_PINS), pinsPlacementSelector);
-  };
-
   // Global functions
   window.rendering = {
     reRenderPins: window.debounce(function () {
@@ -300,6 +295,10 @@
     })
   };
 
-  // Runtime
-  window.xhr.load(onSuccessHandler, window.xhr.onErrorHandler);
+  window.dataLoad = {
+    onSuccessHandler: function (data) {
+      advertisments = generateAdsArray(data);
+      renderPins(advertisments.slice(0, MAX_RENDERED_PINS), pinsPlacementSelector);
+    }
+  };
 })();
