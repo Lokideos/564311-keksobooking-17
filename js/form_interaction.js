@@ -171,7 +171,7 @@
     validateCapacityPerRoomCount(selectedRoomNumbers, selectedCapacity);
   };
 
-  var onMainPinMouseup = function () {
+  var onMainPinMouseMove = function () {
     fillAddressElement(adForm, 'input[name="address"]', calculateMainPinCoordinates());
   };
 
@@ -275,7 +275,7 @@
   validateCapacityPerRoomCount(roomNumbers[roomNumbers.selectedIndex], capacity[capacity.selectedIndex]);
 
   var applyEventHandlers = function () {
-    mainPin.addEventListener('mouseup', onMainPinMouseup);
+    mainPin.addEventListener('mousemove', onMainPinMouseMove);
     appartmentType.addEventListener('change', onAppartmentTypeChange);
     timeIn.addEventListener('change', onTimeInChange);
     timeOut.addEventListener('change', onTimeOutChange);
