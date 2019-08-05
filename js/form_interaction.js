@@ -138,6 +138,10 @@
     });
     mainPin.style = MAIN_PIN_INITIAL_STYLE;
     window.rendering.removePins();
+
+    if (map.querySelector('.map__card')) {
+      map.querySelector('.map__card').remove();
+    }
   };
 
   // DOM manipulation
